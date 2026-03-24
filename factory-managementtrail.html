@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Paripoorna Exports Garments — Factory Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f172a;--ink2:#1e293b;--ink3:#475569;--ink4:#94a3b8;--ink5:#cbd5e1;
+  --bg:#f8fafc;--bg2:#f1f5f9;--bg3:#e2e8f0;--white:#ffffff;
+  --blue:#1d4ed8;--blue2:#1e40af;--blues:#eff6ff;--blueb:#bfdbfe;
+  --green:#15803d;--greens:#f0fdf4;--greenb:#86efac;
+  --amber:#92400e;--ambers:#fffbeb;--amberb:#fcd34d;
+  --red:#991b1b;--reds:#fef2f2;--redb:#fca5a5;
+  --violet:#5b21b6;--violets:#f5f3ff;--violetb:#c4b5fd;
+  --orange:#9a3412;--oranges:#fff7ed;--orangeb:#fdba74;
+  --f:Inter,system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  --sw:248px;--hh:56px;--r:6px;--r2:10px;--r3:14px;
+  --s1:0 1px 2px rgba(15,23,42,.06);
+  --s2:0 1px 3px rgba(15,23,42,.1),0 1px 2px rgba(15,23,42,.06);
+  --s4:0 10px 25px rgba(15,23,42,.1),0 4px 10px rgba(15,23,42,.06);
+}
+html{font-size:13.5px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:4px}
+
+/* SIDEBAR */
+.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--ink);display:flex;flex-direction:column;z-index:400}
+.sb-head{height:var(--hh);padding:0 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.sb-logo{width:32px;height:32px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-brand-name{font-size:12.5px;font-weight:700;color:#fff;line-height:1.3}
+.sb-brand-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px}
+.sb-nav{flex:1;padding:8px;overflow-y:auto}
+.sb-sec{font-size:9.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:12px 8px 4px;display:block}
+.sb-btn{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:var(--r);border:none;background:transparent;color:rgba(255,255,255,.48);font-family:var(--f);font-size:12.5px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:all .15s;margin-bottom:1px}
+.sb-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.88)}
+.sb-btn.on{background:var(--blue);color:#fff;font-weight:600}
+.sb-btn-l{display:flex;align-items:center;gap:9px}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);flex-shrink:0}
+.sb-btn.on .sb-dot{background:rgba(255,255,255,.6)}
+.sb-cnt{font-size:10px;font-weight:700;font-family:var(--mono);background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:1px 7px;border-radius:20px}
+.sb-btn.on .sb-cnt{background:rgba(255,255,255,.2);color:#fff}
+.sb-foot{padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.sb-live{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.3)}
+.sb-ldot{width:6px;height:6px;background:#22c55e;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(34,197,94,.2)}50%{box-shadow:0 0 0 4px rgba(34,197,94,.1)}}
+#sb-clk{font-family:var(--mono);font-size:11.5px;color:rgba(255,255,255,.5);margin-top:4px}
+
+/* TOPBAR */
+.topbar{position:fixed;left:var(--sw);right:0;top:0;height:var(--hh);background:var(--white);border-bottom:1px solid var(--bg3);display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:300;box-shadow:var(--s1)}
+.tb-bc{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink4)}
+.tb-bc .sep{color:var(--bg3)}.tb-bc .cur{font-weight:600;color:var(--ink)}
+.tb-date{font-size:12px;color:var(--ink3);padding:4px 11px;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);font-weight:500}
+
+/* LAYOUT */
+.main{margin-left:var(--sw);padding-top:var(--hh);min-height:100vh}
+.pg{display:none;padding:24px;animation:fi .18s ease}.pg.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.ph-l .pt{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.4px}
+.ph-l .ps{font-size:12px;color:var(--ink4);margin-top:3px}
+.ph-r{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.slbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink4);margin-bottom:8px}
+
+/* GRID */
+.g{display:grid;gap:12px;margin-bottom:18px}
+.g5{grid-template-columns:repeat(5,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+
+/* KPI */
+.kc{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r2);padding:16px 18px;position:relative;overflow:hidden;box-shadow:var(--s1);transition:box-shadow .18s,transform .18s}
+.kc:hover{box-shadow:var(--s2);transform:translateY(-1px)}
+.kc-bar{position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue))}
+.kc-lbl{font-size:10.5px;font-weight:600;color:var(--ink4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kc-val{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.5px;line-height:1}
+.kc-sub{font-size:11px;color:var(--ink5);margin-top:5px}.kc-sub b{color:var(--kc,var(--blue))}
+
+/* DATA CARD */
+.dc{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r2);overflow:hidden;box-shadow:var(--s1);margin-bottom:18px}
+.dc-hd{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--bg3)}
+.dc-hd h3{font-size:13.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.dc-cnt{font-size:10.5px;font-weight:600;background:var(--bg);color:var(--ink3);padding:2px 8px;border-radius:20px;border:1px solid var(--bg3)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg)}
+th{padding:9px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--bg3);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bg2);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg)}
+td{padding:10px 14px;font-size:12.5px;color:var(--ink2);vertical-align:middle}
+.t-id{font-family:var(--mono);font-size:11.5px;color:var(--ink4);font-weight:500}
+.t-name{font-weight:600;color:var(--ink)}
+.t-wage{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--green)}
+.t-sal{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--violet)}
+.t-mono{font-family:var(--mono);font-size:11px;color:var(--ink4)}
+.t-amt{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber)}
+.t-tot td{font-weight:700;background:var(--bg);border-top:2px solid var(--bg3)!important}
+
+/* BADGES */
+.bd{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
+.bd-blue{background:var(--blues);color:var(--blue);border:1px solid var(--blueb)}
+.bd-green{background:var(--greens);color:var(--green);border:1px solid var(--greenb)}
+.bd-amber{background:var(--ambers);color:var(--amber);border:1px solid var(--amberb)}
+.bd-red{background:var(--reds);color:var(--red);border:1px solid var(--redb)}
+.bd-violet{background:var(--violets);color:var(--violet);border:1px solid var(--violetb)}
+.bd-orange{background:var(--oranges);color:var(--orange);border:1px solid var(--orangeb)}
+.bd-gray{background:var(--bg);color:var(--ink3);border:1px solid var(--bg3)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);border:1px solid transparent;font-family:var(--f);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1}
+.btn-pri{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 1px 2px rgba(29,78,216,.2)}
+.btn-pri:hover{background:var(--blue2);transform:translateY(-1px)}
+.btn-out{background:var(--white);color:var(--ink2);border-color:var(--bg3);box-shadow:var(--s1)}
+.btn-out:hover{border-color:var(--ink4);background:var(--bg)}
+.btn-suc{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-suc:hover{background:#166534}
+.btn-del{background:var(--reds);color:var(--red);border:1px solid var(--redb)}
+.btn-del:hover{background:#fee2e2}
+.btn-info{background:var(--blues);color:var(--blue);border:1px solid var(--blueb)}
+.btn-info:hover{background:#dbeafe}
+.btn-ghost{background:transparent;border:none;color:var(--ink3)}
+.btn-ghost:hover{background:var(--bg);color:var(--ink)}
+.btn-sm{padding:5px 11px;font-size:11.5px}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:4px}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--bg3);border-radius:var(--r);padding:6px 11px;flex:1;min-width:180px;max-width:300px;box-shadow:var(--s1);transition:border-color .15s}
+.search:focus-within{border-color:var(--blue)}
+.search input{background:none;border:none;outline:none;font-family:var(--f);font-size:12.5px;color:var(--ink);width:100%}
+.search input::placeholder{color:var(--ink4)}
+.fsel{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r);padding:6px 10px;font-family:var(--f);font-size:12px;color:var(--ink2);outline:none;box-shadow:var(--s1);cursor:pointer}
+.fsel:focus{border-color:var(--blue)}
+
+/* ATTENDANCE */
+.att-sec{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r2);overflow:hidden;margin-bottom:12px;box-shadow:var(--s1)}
+.att-sec-hd{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--bg);border-bottom:1px solid var(--bg3)}
+.att-sec-hd-l{display:flex;align-items:center;gap:10px}
+.att-stripe{width:4px;height:18px;border-radius:2px;background:var(--as,var(--blue));flex-shrink:0}
+.att-sec-name{font-size:13px;font-weight:700;color:var(--ink)}
+.att-pill{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--bg2);color:var(--ink3);border:1px solid var(--bg3)}
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--bg2);transition:background .1s}
+.att-row:last-child{border-bottom:none}.att-row:hover{background:var(--bg)}
+.att-row-l{display:flex;align-items:center;gap:11px}
+.att-av{width:33px;height:33px;border-radius:var(--r);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--blues);color:var(--blue)}
+.att-name{font-size:13px;font-weight:600;color:var(--ink)}
+.att-meta{font-size:11px;color:var(--ink4);margin-top:1px}
+.att-tgl{display:flex;border-radius:var(--r);overflow:hidden;border:1px solid var(--bg3)}
+.att-tgl button{padding:5px 12px;border:none;font-family:var(--f);font-size:11.5px;font-weight:600;cursor:pointer;background:var(--white);color:var(--ink4);transition:all .14s;line-height:1}
+.att-tgl button+button{border-left:1px solid var(--bg3)}
+.att-tgl .tp.on{background:var(--green);color:#fff}
+.att-tgl .ta.on{background:var(--red);color:#fff}
+.att-tgl .th.on{background:#b45309;color:#fff}
+
+/* PRODUCTION */
+.prod-card{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r2);padding:20px;box-shadow:var(--s1)}
+.prod-hd{display:flex;align-items:center;gap:9px;padding-bottom:13px;margin-bottom:14px;border-bottom:1px solid var(--bg3)}
+.prod-stripe{width:4px;height:20px;border-radius:2px;background:var(--pc,var(--blue));flex-shrink:0}
+.prod-hd h3{font-size:14px;font-weight:700;color:var(--ink)}
+.prod-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.prod-row label{width:106px;font-size:12px;font-weight:500;color:var(--ink3);flex-shrink:0}
+.prod-row input{flex:1;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:7px 10px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;transition:all .14s}
+.prod-row input:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(29,78,216,.08)}
+.prod-row .unit{font-size:11px;color:var(--ink4);width:24px;flex-shrink:0}
+.prog-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:12px}
+.prog-fill{height:100%;border-radius:3px;background:var(--pc,var(--blue));transition:width .5s cubic-bezier(.4,0,.2,1)}
+.prog-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--ink4)}
+.prog-meta .pct{font-weight:700;color:var(--pc,var(--blue))}
+
+/* REPORT */
+.rep-block{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r2);padding:18px 20px;margin-bottom:14px;box-shadow:var(--s1)}
+.rep-title{font-size:12.5px;font-weight:700;color:var(--ink);padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bg3)}
+.rep-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bg2)}
+.rep-row:last-child{border-bottom:none}
+.rep-k{font-size:12.5px;color:var(--ink3)}.rep-v{font-size:12.5px;font-weight:700;color:var(--ink)}
+
+/* FORM */
+.fg{display:grid;gap:12px}.fg2{grid-template-columns:repeat(2,1fr)}.fg3{grid-template-columns:repeat(3,1fr)}
+.ff{display:flex;flex-direction:column;gap:4px}
+.ff label{font-size:11.5px;font-weight:600;color:var(--ink2)}
+.ff input,.ff select,.ff textarea{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:8px 11px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;transition:all .14s}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 3px rgba(29,78,216,.08)}
+.form-section-hd{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);padding:14px 0 6px;border-top:1px solid var(--bg3);margin-top:4px;grid-column:1/-1}
+.form-section-hd:first-child{border-top:none;padding-top:0}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(3px);z-index:999;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.ov.on{display:flex}
+.modal{background:var(--white);border:1px solid var(--bg3);border-radius:var(--r3);padding:26px;width:100%;max-width:700px;box-shadow:var(--s4);animation:fi .2s ease;margin:auto}
+.modal h2{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:4px;letter-spacing:-.3px}
+.modal-sub{font-size:12px;color:var(--ink4);margin-bottom:18px}
+.modal-ft{display:flex;gap:7px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--bg3)}
+
+/* INFO PANEL (slide-in) */
+.info-panel{position:fixed;right:-600px;top:0;bottom:0;width:600px;background:var(--white);border-left:1px solid var(--bg3);box-shadow:-4px 0 24px rgba(15,23,42,.12);z-index:800;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1)}
+.info-panel.on{right:0}
+.info-panel-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bg3);flex-shrink:0}
+.info-panel-hd h3{font-size:15px;font-weight:800;color:var(--ink)}
+.info-panel-body{flex:1;overflow-y:auto;padding:22px}
+.info-section{margin-bottom:22px}
+.info-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bg3)}
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.info-field{display:flex;flex-direction:column;gap:3px}
+.info-field label{font-size:10.5px;font-weight:600;color:var(--ink4)}
+.info-field span{font-size:13px;color:var(--ink2);font-weight:500}
+.info-field span.mono{font-family:var(--mono);font-size:12px}
+.info-field.full{grid-column:1/-1}
+.overlay-bg{position:fixed;inset:0;background:rgba(15,23,42,.3);z-index:799;display:none}
+.overlay-bg.on{display:block}
+
+/* TABS */
+.tab-bar{display:flex;border-bottom:2px solid var(--bg3);margin-bottom:18px}
+.tab{padding:8px 16px;border:none;background:transparent;color:var(--ink3);font-family:var(--f);font-size:12.5px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .14s}
+.tab:hover{color:var(--ink)}.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:8px;font-family:var(--f);font-size:12.5px;font-weight:600;z-index:9999;pointer-events:none;transform:translateY(60px);opacity:0;transition:all .25s;box-shadow:var(--s4)}
+.toast.on{transform:translateY(0);opacity:1}
+.t-ok{background:var(--green);color:#fff}.t-err{background:var(--red);color:#fff}.t-info{background:var(--blue);color:#fff}
+
+.empty{text-align:center;padding:40px;color:var(--ink4);font-size:13px}
+
+@media print{.sb,.topbar,.ph-r,.toolbar,.att-tgl,.tab-bar,.btn{display:none!important}.main{margin:0!important;padding:0!important}.pg{display:block!important;padding:16px!important}body{background:#fff}}
+@media(max-width:1100px){.g5{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){
+  :root{--sw:60px}
+  .sb-brand,.sb-sec,.sb-btn span:not(.sb-dot),.sb-cnt,.sb-live span,#sb-clk{display:none}
+  .sb-btn{justify-content:center;padding:10px}.sb-head{justify-content:center}
+  .pg{padding:14px}.g5,.g4,.g3{grid-template-columns:repeat(2,1fr)}.fg2,.fg3{grid-template-columns:1fr}
+  .info-panel{width:100%;right:-100%}
+}
+</style>
+  <!-- Firebase REST API - works from local file -->
+  <script>
+    (function(){
+      var PROJECT = "paripoorna-factory";
+      var API_KEY = "AIzaSyDs8nu68aJkWSGZlpPPNTzH74fYszY7hrM";
+      var BASE    = "https://firestore.googleapis.com/v1/projects/" + PROJECT + "/databases/(default)/documents/pe_factory/";
+
+      function setStatus(state, msg){
+        var el = document.getElementById("fb-status");
+        if(!el) return;
+        var map = {
+          ok:      {bg:"#f0fdf4", color:"#15803d", border:"#86efac"},
+          syncing: {bg:"#eff6ff", color:"#1d4ed8", border:"#bfdbfe"},
+          offline: {bg:"#fff7ed", color:"#92400e", border:"#fcd34d"},
+          error:   {bg:"#fef2f2", color:"#991b1b", border:"#fca5a5"}
+        };
+        var s = map[state] || map.ok;
+        el.style.background  = s.bg;
+        el.style.color       = s.color;
+        el.style.borderColor = s.border;
+        el.textContent = msg || (state==="ok"?"Synced":state==="syncing"?"Syncing...":"Offline");
+      }
+
+      async function fbSave(key, value){
+        try{
+          var url = BASE + key + "?key=" + API_KEY;
+          var body = {fields:{data:{stringValue: JSON.stringify(value)}, ts:{integerValue: Date.now()}}};
+          var r = await fetch(url, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
+          if(!r.ok) throw new Error("HTTP " + r.status);
+        } catch(e){
+          console.warn("fbSave error:", e);
+          throw e;
+        }
+      }
+
+      async function fbLoad(key){
+        try{
+          var url = BASE + key + "?key=" + API_KEY;
+          var r = await fetch(url);
+          if(r.status === 404) return null;
+          if(!r.ok) throw new Error("HTTP " + r.status);
+          var json = await r.json();
+          var raw = json.fields && json.fields.data && json.fields.data.stringValue;
+          return raw ? JSON.parse(raw) : null;
+        } catch(e){
+          console.warn("fbLoad error:", e);
+          return null;
+        }
+      }
+
+      async function fbLoadAll(){
+        setStatus("syncing","Connecting to Firebase...");
+        try{
+          var keys = ["workers","staff","info","aw","as","prod","notes","left"];
+          var results = {};
+          var promises = keys.map(async function(k){
+            var val = await fbLoad(k);
+            if(val !== null) results[k] = val;
+          });
+          await Promise.all(promises);
+          setStatus("ok","Firebase connected");
+          return results;
+        } catch(e){
+          setStatus("offline","Offline - using local data");
+          return null;
+        }
+      }
+
+      // Live polling - check Firebase every 30 seconds for attendance updates
+      function startLiveSync(){
+        setInterval(async function(){
+          try{
+            var awFresh = await fbLoad("aw");
+            var asFresh = await fbLoad("as");
+            var changed = false;
+            if(awFresh && JSON.stringify(awFresh) !== JSON.stringify(window.DB.aw)){
+              window.DB.aw = awFresh;
+              localStorage.setItem("pe4_aw", JSON.stringify(awFresh));
+              changed = true;
+            }
+            if(asFresh && JSON.stringify(asFresh) !== JSON.stringify(window.DB.as)){
+              window.DB.as = asFresh;
+              localStorage.setItem("pe4_as", JSON.stringify(asFresh));
+              changed = true;
+            }
+            if(changed){
+              var dash = document.getElementById("pg-dashboard");
+              if(dash && dash.classList.contains("on")) window.rDash && window.rDash();
+              setStatus("ok","Live update received");
+            } else {
+              setStatus("ok","Synced");
+            }
+          } catch(e){ /* silent - will retry */ }
+        }, 30000); // every 30 seconds
+      }
+
+      window.fbSave        = fbSave;
+      window.fbLoadAll     = fbLoadAll;
+      window.setFbStatus   = setStatus;
+      window.startLiveSync = startLiveSync;
+
+      // Set initial status
+      setStatus("syncing","Firebase loading...");
+    })();
+  </script>
+
+</head>
+<body>
+
+<aside class="sb">
+  <div class="sb-head">
+    <div class="sb-logo">PE</div>
+    <div>
+      <div class="sb-brand-name">Paripoorna Exports</div>
+      <div class="sb-brand-sub">Huliyar, Tumkur District</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-sec">Overview</span>
+    <button class="sb-btn on" onclick="nav('dashboard')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Dashboard</span></div></button>
+    <span class="sb-sec">Daily Operations</span>
+    <button class="sb-btn" onclick="nav('att-w')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Worker Attendance</span></div></button>
+    <button class="sb-btn" onclick="nav('att-s')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Staff Attendance</span></div></button>
+    <button class="sb-btn" onclick="nav('prod')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Production</span></div></button>
+    <button class="sb-btn" onclick="nav('eod')"><div class="sb-btn-l"><div class="sb-dot"></div><span>EOD Report</span></div></button>
+    <button class="sb-btn" onclick="nav('mprod')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Month Production</span></div></button>
+    <span class="sb-sec">Records</span>
+    <button class="sb-btn" onclick="nav('workers')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Workers</span></div><span class="sb-cnt" id="nb-w">0</span></button>
+    <button class="sb-btn" onclick="nav('staff')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Staff</span></div><span class="sb-cnt" id="nb-s">0</span></button>
+    <button class="sb-btn" onclick="nav('info')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Personnel Info</span></div></button>
+    <button class="sb-btn" onclick="nav('wages')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Wages &amp; Salary</span></div></button>
+    <button class="sb-btn" onclick="nav('left')"><div class="sb-btn-l"><div class="sb-dot"></div><span>Left Workers</span></div><span class="sb-cnt" id="nb-left">0</span></button>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-live"><div class="sb-ldot"></div><span>Online &mdash; Bengaluru</span></div>
+    <div id="sb-clk"></div>
+  </div>
+</aside>
+
+<header class="topbar">
+  <div class="tb-bc"><span>Paripoorna Exports</span><span class="sep">&#8250;</span><span class="cur" id="tb-cur">Dashboard</span></div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div id="fb-status" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;white-space:nowrap">Firebase loading...</div>
+    <div class="tb-date" id="tb-date"></div>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="pg on" id="pg-dashboard">
+  <div class="ph">
+    <div class="ph-l"><div class="pt" id="greet">Good Morning</div><div class="ps">Factory overview — monitored remotely from Bengaluru</div></div>
+    <div class="ph-r">
+      <button class="btn btn-out btn-sm" onclick="nav('att-w')">Mark Attendance</button>
+      <button class="btn btn-pri btn-sm" onclick="nav('eod')">View EOD Report</button>
+    </div>
+  </div>
+  <div class="slbl">WORKER SECTIONS — TODAY</div>
+  <div class="g g5" id="d-secs"></div>
+  <div class="slbl">PRODUCTION STATUS — TODAY</div>
+  <div class="g g4" id="d-prods"></div>
+  <div class="g g3">
+    <div class="kc" style="--kc:var(--blue)"><div class="kc-bar"></div><div class="kc-lbl">Total Workers</div><div class="kc-val" id="d-tw">0</div><div class="kc-sub">Registered in system</div></div>
+    <div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Workers Present</div><div class="kc-val" id="d-wp">0</div><div class="kc-sub">Marked today</div></div>
+    <div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Staff Present</div><div class="kc-val" id="d-sp">0</div><div class="kc-sub">of <b id="d-st">0</b> staff members</div></div>
+  </div>
+  <div class="dc">
+    <div class="dc-hd"><h3>Workers Snapshot <span class="dc-cnt" id="d-snap-c"></span></h3><button class="btn btn-out btn-sm" onclick="nav('workers')">View All Workers</button></div>
+    <table><thead><tr><th>Emp ID</th><th>Name</th><th>Section</th><th>Daily Wage</th><th>Type</th><th>Today</th></tr></thead><tbody id="d-snap"></tbody></table>
+  </div>
+</div>
+
+<!-- WORKER ATTENDANCE -->
+<div class="pg" id="pg-att-w">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Worker Attendance</div><div class="ps">Mark present, absent or half-day per section</div></div>
+    <div class="ph-r">
+      <button class="btn btn-out btn-sm" onclick="markAll('w')">Mark All Present</button>
+      <button class="btn btn-suc" onclick="saveAtt('w')">Save Attendance</button>
+    </div>
+  </div>
+  <div class="g g5" id="aw-summ" style="margin-bottom:20px"></div>
+  <div id="aw-body"></div>
+</div>
+
+<!-- STAFF ATTENDANCE -->
+<div class="pg" id="pg-att-s">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Staff Attendance</div><div class="ps">Separate attendance tracking for all staff members</div></div>
+    <div class="ph-r">
+      <button class="btn btn-out btn-sm" onclick="markAll('s')">Mark All Present</button>
+      <button class="btn btn-suc" onclick="saveAtt('s')">Save Attendance</button>
+    </div>
+  </div>
+  <div class="g g3" id="as-summ" style="margin-bottom:20px"></div>
+  <div id="as-body"></div>
+</div>
+
+<!-- PRODUCTION -->
+<!-- PRODUCTION -->
+<div class="pg" id="pg-prod">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Production Entry</div><div class="ps">Record daily batch production with comments — navigate any date to review</div></div>
+    <div class="ph-r">
+      <button class="btn btn-out btn-sm" onclick="prodNavDate(-1)">&#8249; Prev Day</button>
+      <input type="date" id="prod-date" style="padding:5px 10px;border:1px solid var(--bg3);border-radius:var(--r);font-family:var(--f);font-size:12.5px;background:var(--W);color:var(--ink);outline:none" onchange="lProd()">
+      <button class="btn btn-out btn-sm" onclick="prodNavDate(1)">Next Day &#8250;</button>
+      <button class="btn btn-out btn-sm" onclick="clearProd()">Clear</button>
+      <button class="btn btn-suc" onclick="saveProd()">Save</button>
+    </div>
+  </div>
+  <div id="prod-viewing-banner" style="display:none;background:var(--ambers);color:var(--amber);border:1px solid var(--amberb);border-radius:var(--r2);padding:10px 16px;margin-bottom:14px;font-size:12.5px;font-weight:600">
+    Viewing past record — <span id="prod-view-date-lbl"></span>. Changes will update that day's saved data.
+  </div>
+  <div class="g g2">
+    <div class="prod-card" style="--pc:#15803d"><div class="prod-hd"><div class="prod-stripe"></div><h3>Batch A</h3></div>
+      <div class="prod-row"><label>Target Pieces</label><input type="number" id="bA_t" placeholder="500"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Completed</label><input type="number" id="bA_d" placeholder="0" oninput="upd('bA')"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Style / Order</label><input type="text" id="bA_s" placeholder="PO or style number"></div>
+      <div class="prod-row" style="align-items:flex-start"><label style="padding-top:6px">Comments</label><textarea id="bA_c" rows="2" placeholder="Notes, incidents, quality issues..." style="flex:1;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:7px 10px;font-family:var(--f);font-size:12.5px;color:var(--ink);outline:none;resize:vertical;line-height:1.5;transition:all .14s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bg3)'"></textarea></div>
+      <div class="prog-track"><div class="prog-fill" id="bA_bar" style="width:0%;background:#15803d"></div></div>
+      <div class="prog-meta"><span>Completion</span><span class="pct" id="bA_pct">0%</span></div></div>
+    <div class="prod-card" style="--pc:#b45309"><div class="prod-hd"><div class="prod-stripe"></div><h3>Batch B</h3></div>
+      <div class="prod-row"><label>Target Pieces</label><input type="number" id="bB_t" placeholder="400"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Completed</label><input type="number" id="bB_d" placeholder="0" oninput="upd('bB')"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Style / Order</label><input type="text" id="bB_s" placeholder="PO or style number"></div>
+      <div class="prod-row" style="align-items:flex-start"><label style="padding-top:6px">Comments</label><textarea id="bB_c" rows="2" placeholder="Notes, incidents, quality issues..." style="flex:1;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:7px 10px;font-family:var(--f);font-size:12.5px;color:var(--ink);outline:none;resize:vertical;line-height:1.5;transition:all .14s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bg3)'"></textarea></div>
+      <div class="prog-track"><div class="prog-fill" id="bB_bar" style="width:0%;background:#b45309"></div></div>
+      <div class="prog-meta"><span>Completion</span><span class="pct" id="bB_pct">0%</span></div></div>
+    <div class="prod-card" style="--pc:#1d4ed8"><div class="prod-hd"><div class="prod-stripe"></div><h3>Batch C</h3></div>
+      <div class="prod-row"><label>Target Pieces</label><input type="number" id="bC_t" placeholder="300"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Completed</label><input type="number" id="bC_d" placeholder="0" oninput="upd('bC')"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Style / Order</label><input type="text" id="bC_s" placeholder="PO or style number"></div>
+      <div class="prod-row" style="align-items:flex-start"><label style="padding-top:6px">Comments</label><textarea id="bC_c" rows="2" placeholder="Notes, incidents, quality issues..." style="flex:1;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:7px 10px;font-family:var(--f);font-size:12.5px;color:var(--ink);outline:none;resize:vertical;line-height:1.5;transition:all .14s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bg3)'"></textarea></div>
+      <div class="prog-track"><div class="prog-fill" id="bC_bar" style="width:0%;background:#1d4ed8"></div></div>
+      <div class="prog-meta"><span>Completion</span><span class="pct" id="bC_pct">0%</span></div></div>
+    <div class="prod-card" style="--pc:#991b1b"><div class="prod-hd"><div class="prod-stripe"></div><h3>Packing</h3></div>
+      <div class="prod-row"><label>Target Pieces</label><input type="number" id="bP_t" placeholder="600"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Packed</label><input type="number" id="bP_d" placeholder="0" oninput="upd('bP')"><span class="unit">pcs</span></div>
+      <div class="prod-row"><label>Dispatch Date</label><input type="date" id="bP_s"></div>
+      <div class="prod-row" style="align-items:flex-start"><label style="padding-top:6px">Comments</label><textarea id="bP_c" rows="2" placeholder="Dispatch notes, quality remarks..." style="flex:1;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:7px 10px;font-family:var(--f);font-size:12.5px;color:var(--ink);outline:none;resize:vertical;line-height:1.5;transition:all .14s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bg3)'"></textarea></div>
+      <div class="prog-track"><div class="prog-fill" id="bP_bar" style="width:0%;background:#991b1b"></div></div>
+      <div class="prog-meta"><span>Completion</span><span class="pct" id="bP_pct">0%</span></div></div>
+  </div>
+  <!-- DAILY FACTORY INCIDENT LOG -->
+  <div class="dc" style="margin-top:4px">
+    <div class="dc-hd"><h3>Daily Factory Log &amp; Incidents</h3></div>
+    <div style="padding:16px">
+      <textarea id="daily-log" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:10px 12px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;resize:vertical;line-height:1.6" placeholder="Record any factory incidents, machine breakdowns, power cuts, visitor notes, quality holds, anything that happened today..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- MONTH PRODUCTION -->
+<div class="pg" id="pg-mprod">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Month Production</div><div class="ps">Full month-wise production summary with daily breakdown and all comments</div></div>
+    <div class="ph-r">
+      <button class="btn btn-out btn-sm" onclick="mprodPrevMonth()">&#8249; Prev Month</button>
+      <span id="mprod-month-lbl" style="font-size:13px;font-weight:700;color:var(--ink);padding:0 4px"></span>
+      <button class="btn btn-out btn-sm" onclick="mprodNextMonth()">Next Month &#8250;</button>
+    </div>
+  </div>
+  <!-- Monthly totals -->
+  <div class="g g4" id="mprod-totals" style="margin-bottom:18px"></div>
+  <!-- Production days table -->
+  <div class="dc" style="margin-bottom:18px">
+    <div class="dc-hd"><h3>Daily Production Log <span class="dc-cnt" id="mprod-days-cnt">0 working days</span></h3></div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Date</th><th>Batch A</th><th>Batch B</th><th>Batch C</th><th>Packing</th><th>Total Pieces</th><th>Factory Log</th></tr></thead>
+        <tbody id="mprod-days-tbl"></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Comments review per batch -->
+  <div class="dc">
+    <div class="dc-hd"><h3>All Comments This Month — By Batch</h3></div>
+    <div style="padding:16px" id="mprod-comments"></div>
+  </div>
+</div>
+
+<div class="pg" id="pg-eod">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">End-of-Day Report</div><div class="ps">Daily summary for factory owner review from Bengaluru</div></div>
+    <div class="ph-r"><button class="btn btn-out btn-sm" onclick="window.print()">Print Report</button></div>
+  </div>
+  <div class="g g2">
+    <div class="rep-block"><div class="rep-title">Worker Attendance Summary</div><div id="eod-wa"></div></div>
+    <div class="rep-block"><div class="rep-title">Staff Attendance Summary</div><div id="eod-sa"></div></div>
+  </div>
+  <div class="rep-block"><div class="rep-title">Production Summary</div><div class="g g4" id="eod-prods"></div></div>
+  <div class="rep-block">
+    <div class="rep-title">Operator Notes</div>
+    <textarea id="op-notes" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:10px 12px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;resize:vertical;line-height:1.6" placeholder="Enter notes, issues or remarks for the owner..."></textarea>
+    <div style="margin-top:9px"><button class="btn btn-pri btn-sm" onclick="saveNotes()">Save Notes</button></div>
+  </div>
+</div>
+
+<!-- WORKERS -->
+<div class="pg" id="pg-workers">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Workers</div><div class="ps">189 workers — Regular, ESI/PF and No Account categories</div></div>
+    <button class="btn btn-pri" onclick="openWM()">Add Worker</button>
+  </div>
+  <div class="toolbar">
+    <div class="search"><input id="w-q" type="text" placeholder="Search name or ID..." oninput="renderW()"></div>
+    <select class="fsel" id="w-sec" onchange="renderW()"><option value="">All Sections</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option></select>
+    <select class="fsel" id="w-typ" onchange="renderW()"><option value="">All Types</option><option value="regular">Regular</option><option value="esi">ESI / PF</option><option value="noacc">No Account</option></select>
+  </div>
+  <div class="dc">
+    <div class="dc-hd"><h3>Employee Register <span class="dc-cnt" id="w-lbl">0</span></h3></div>
+    <table><thead><tr><th>Emp ID</th><th>Name</th><th>Section</th><th>Daily Wage</th><th>Aadhaar</th><th>Account</th><th>Type</th><th>Actions</th></tr></thead>
+    <tbody id="w-tbl"></tbody></table>
+  </div>
+</div>
+
+<!-- STAFF -->
+<div class="pg" id="pg-staff">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Staff</div><div class="ps">Supervisory and management staff — separate salary structure</div></div>
+    <button class="btn btn-pri" onclick="openSM()">Add Staff Member</button>
+  </div>
+  <div class="toolbar">
+    <div class="search"><input id="s-q" type="text" placeholder="Search name, ID, role..." oninput="renderS()"></div>
+  </div>
+  <div class="dc">
+    <div class="dc-hd"><h3>Staff Directory <span class="dc-cnt" id="s-lbl">0</span></h3></div>
+    <table><thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Monthly Salary</th><th>Aadhaar</th><th>Account</th><th>Actions</th></tr></thead>
+    <tbody id="s-tbl"></tbody></table>
+  </div>
+</div>
+
+<!-- PERSONNEL INFO -->
+<div class="pg" id="pg-info">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Personnel Information</div><div class="ps">Complete employee records as per Factories &amp; Boiler Act requirements</div></div>
+  </div>
+  <div class="toolbar">
+    <div class="search" style="max-width:360px"><input id="info-q" type="text" placeholder="Search by name, employee ID or Aadhaar..." oninput="renderInfo()"></div>
+    <select class="fsel" id="info-dept" onchange="renderInfo()"><option value="">All Departments</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option><option>Staff</option></select>
+    <select class="fsel" id="info-type" onchange="renderInfo()"><option value="">All</option><option value="worker">Workers</option><option value="staff">Staff</option></select>
+  </div>
+  <div class="dc">
+    <div class="dc-hd"><h3>Personnel Records <span class="dc-cnt" id="info-lbl">0 records</span></h3></div>
+    <table><thead><tr><th>Emp ID</th><th>Name</th><th>Department</th><th>Designation</th><th>Date of Joining</th><th>Employment Type</th><th>ESI No.</th><th>PF No.</th><th>Actions</th></tr></thead>
+    <tbody id="info-tbl"></tbody></table>
+  </div>
+</div>
+
+<!-- WAGES -->
+<div class="pg" id="pg-wages">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Wages &amp; Salary</div><div class="ps">View by month or pick any date to see daily cost breakdown</div></div>
+    <button class="btn btn-out btn-sm" onclick="printWages()">Print / Export</button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab on" onclick="wTab('w',this)">Workers — Monthly</button>
+    <button class="tab" onclick="wTab('s',this)">Staff — Monthly</button>
+    <button class="tab" onclick="wTab('d',this)">Date-wise Report</button>
+  </div>
+
+  <!-- WORKERS MONTHLY -->
+  <div id="wg-w">
+    <div class="toolbar">
+      <select class="fsel" id="wg-mon" onchange="renderWg()">
+        <option>January</option><option>February</option><option>March</option><option>April</option>
+        <option>May</option><option>June</option><option>July</option><option>August</option>
+        <option>September</option><option>October</option><option>November</option><option>December</option>
+      </select>
+      <select class="fsel" id="wg-yr" onchange="renderWg()">
+        <option>2024</option><option selected>2025</option><option>2026</option>
+      </select>
+    </div>
+    <div class="g g3" id="wg-kpi" style="margin-bottom:14px"></div>
+    <div class="dc">
+      <div class="dc-hd"><h3>Worker Wage Sheet <span class="dc-cnt" id="wg-mon-lbl"></span></h3><button class="btn btn-out btn-sm" onclick="printWages()">Print</button></div>
+      <table><thead><tr><th>Emp ID</th><th>Name</th><th>Section</th><th>Daily Wage</th><th>Days Present</th><th>Half Days</th><th>Total Payable</th><th>Account No.</th></tr></thead>
+      <tbody id="wg-w-tbl"></tbody></table>
+    </div>
+  </div>
+
+  <!-- STAFF MONTHLY -->
+  <div id="wg-s" style="display:none">
+    <div class="toolbar">
+      <select class="fsel" id="wg-mon-s" onchange="renderWg()">
+        <option>January</option><option>February</option><option>March</option><option>April</option>
+        <option>May</option><option>June</option><option>July</option><option>August</option>
+        <option>September</option><option>October</option><option>November</option><option>December</option>
+      </select>
+      <select class="fsel" id="wg-yr-s" onchange="renderWg()">
+        <option>2024</option><option selected>2025</option><option>2026</option>
+      </select>
+    </div>
+    <div class="dc">
+      <div class="dc-hd"><h3>Staff Salary Sheet <span class="dc-cnt" id="wg-mon-s-lbl"></span></h3><button class="btn btn-out btn-sm" onclick="printWages()">Print</button></div>
+      <table><thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Monthly Salary</th><th>Days Present</th><th>Total Payable</th><th>Account No.</th></tr></thead>
+      <tbody id="wg-s-tbl"></tbody></table>
+    </div>
+  </div>
+
+  <!-- DATE-WISE REPORT -->
+  <div id="wg-d" style="display:none">
+    <div class="toolbar" style="align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:12px;font-weight:600;color:var(--ink3)">From:</label>
+        <input type="date" class="fsel" id="wg-date-from" style="padding:6px 10px">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:12px;font-weight:600;color:var(--ink3)">To:</label>
+        <input type="date" class="fsel" id="wg-date-to" style="padding:6px 10px">
+      </div>
+      <button class="btn btn-pri btn-sm" onclick="renderDateWise()">Generate Report</button>
+      <button class="btn btn-out btn-sm" onclick="printWages()">Print</button>
+    </div>
+    <div id="wg-d-content">
+      <div class="empty" style="margin-top:40px">Select a date range and click Generate Report</div>
+    </div>
+  </div>
+</div>
+
+<!-- LEFT WORKERS -->
+<div class="pg" id="pg-left">
+  <div class="ph">
+    <div class="ph-l"><div class="pt">Left Workers &amp; Staff</div><div class="ps">Archive of all removed employees — records preserved permanently</div></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab on" onclick="leftTab('w',this)">Workers</button>
+    <button class="tab" onclick="leftTab('s',this)">Staff</button>
+  </div>
+  <div id="left-w">
+    <div class="toolbar">
+      <div class="search"><input id="lw-q" type="text" placeholder="Search name or ID..." oninput="renderLeft()"></div>
+    </div>
+    <div class="dc">
+      <div class="dc-hd"><h3>Left Workers <span class="dc-cnt" id="lw-lbl">0</span></h3></div>
+      <table><thead><tr><th>Emp ID</th><th>Name</th><th>Section</th><th>Daily Wage</th><th>Date Left</th><th>Months Wages Paid</th><th>Actions</th></tr></thead>
+      <tbody id="lw-tbl"></tbody></table>
+    </div>
+  </div>
+  <div id="left-s" style="display:none">
+    <div class="toolbar">
+      <div class="search"><input id="ls-q" type="text" placeholder="Search name or ID..." oninput="renderLeft()"></div>
+    </div>
+    <div class="dc">
+      <div class="dc-hd"><h3>Left Staff <span class="dc-cnt" id="ls-lbl">0</span></h3></div>
+      <table><thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Salary</th><th>Date Left</th><th>Months Wages Paid</th><th>Actions</th></tr></thead>
+      <tbody id="ls-tbl"></tbody></table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- INFO SIDE PANEL -->
+<div class="overlay-bg" id="info-overlay" onclick="closePanel()"></div>
+<div class="info-panel" id="info-panel">
+  <div class="info-panel-hd">
+    <div>
+      <h3 id="panel-name">—</h3>
+      <div style="font-size:11.5px;color:var(--ink4);margin-top:2px" id="panel-sub">—</div>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center">
+      <button class="btn btn-out btn-sm" id="panel-edit-btn" onclick="">Edit</button>
+      <button class="btn btn-ghost btn-sm" onclick="closePanel()">Close</button>
+    </div>
+  </div>
+  <div class="info-panel-body" id="panel-body"></div>
+</div>
+
+<!-- WORKER MODAL (full form) -->
+<div class="ov" id="wm">
+  <div class="modal" style="max-width:800px">
+    <h2 id="wm-title">Add Worker</h2>
+    <div class="modal-sub">Fill basic details below. Personal info will be saved automatically to Personnel Info.</div>
+    <div class="fg fg2">
+      <div class="ff"><label>Employee ID *</label><input id="wf-id" placeholder="e.g. 001"></div>
+      <div class="ff"><label>Full Name *</label><input id="wf-nm" placeholder="Full name"></div>
+      <div class="ff"><label>Section *</label><select id="wf-sec"><option value="">Select section</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option></select></div>
+      <div class="ff"><label>Role / Designation</label><input id="wf-rl" placeholder="Tailor, Helper, Cutter..."></div>
+      <div class="ff"><label>Daily Wage (Rs.)</label><input id="wf-wg" type="number" placeholder="450"></div>
+      <div class="ff"><label>Employment Type</label><select id="wf-tp"><option value="regular">Regular</option><option value="esi">ESI / PF</option><option value="noacc">No Bank Account</option></select></div>
+      <div class="ff"><label>Aadhaar Number</label><input id="wf-ad" placeholder="12-digit Aadhaar" maxlength="14"></div>
+      <div class="ff"><label>Bank Account No.</label><input id="wf-ac" placeholder="Account number"></div>
+      <!-- Personal Info fields -->
+      <div class="form-section-hd">Personal Details (for Personnel Info)</div>
+      <div class="ff"><label>Father's / Husband's Name</label><input id="wf-fn" placeholder="Father or Husband name"></div>
+      <div class="ff"><label>Gender</label><select id="wf-gen"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="ff"><label>Date of Birth</label><input id="wf-dob" type="date"></div>
+      <div class="ff"><label>Mobile Number</label><input id="wf-mob" placeholder="10-digit mobile" maxlength="10"></div>
+      <div class="ff" style="grid-column:1/-1"><label>Permanent Address</label><textarea id="wf-addr" rows="2" placeholder="Permanent address"></textarea></div>
+      <div class="ff"><label>Date of Joining</label><input id="wf-doj" type="date"></div>
+      <div class="ff"><label>Employment Category</label><select id="wf-ec"><option value="">Select</option><option>Permanent</option><option>Contract</option><option>Trainee / Apprentice</option></select></div>
+      <div class="ff"><label>Payment Mode</label><select id="wf-pm"><option value="">Select</option><option>Bank Transfer</option><option>Cash</option></select></div>
+      <div class="ff"><label>IFSC Code</label><input id="wf-ifsc" placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase"></div>
+      <div class="ff"><label>ESI Number</label><input id="wf-esi" placeholder="ESI number"></div>
+      <div class="ff"><label>PF Number</label><input id="wf-pf" placeholder="PF number"></div>
+      <div class="ff"><label>Voter ID</label><input id="wf-vid" placeholder="Voter ID"></div>
+      <div class="ff"><label>PAN Card</label><input id="wf-pan" placeholder="PAN number" style="text-transform:uppercase"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-out" onclick="closeOv('wm')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveW()">Save Worker</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAFF MODAL -->
+<div class="ov" id="sm">
+  <div class="modal" style="max-width:800px">
+    <h2 id="sm-title">Add Staff Member</h2>
+    <div class="modal-sub">Basic registration details — personal info saved automatically to Personnel Info</div>
+    <div class="fg fg2">
+      <div class="ff"><label>Staff ID *</label><input id="sf-id" placeholder="e.g. S001"></div>
+      <div class="ff"><label>Full Name *</label><input id="sf-nm" placeholder="Full name"></div>
+      <div class="ff"><label>Role / Designation *</label><input id="sf-rl" placeholder="Supervisor, HR, QC..."></div>
+      <div class="ff"><label>Monthly Salary (Rs.)</label><input id="sf-sl" type="number" placeholder="20000"></div>
+      <div class="ff"><label>Aadhaar Number</label><input id="sf-ad" placeholder="12-digit Aadhaar"></div>
+      <div class="ff"><label>Bank Account No.</label><input id="sf-ac" placeholder="Account number"></div>
+      <div class="form-section-hd">Personal Details (for Personnel Info)</div>
+      <div class="ff"><label>Father's / Husband's Name</label><input id="sf-fn" placeholder="Father or Husband name"></div>
+      <div class="ff"><label>Gender</label><select id="sf-gen"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="ff"><label>Date of Birth</label><input id="sf-dob" type="date"></div>
+      <div class="ff"><label>Mobile Number</label><input id="sf-mob" placeholder="10-digit mobile" maxlength="10"></div>
+      <div class="ff" style="grid-column:1/-1"><label>Permanent Address</label><textarea id="sf-addr" rows="2" placeholder="Permanent address"></textarea></div>
+      <div class="ff"><label>Date of Joining</label><input id="sf-doj" type="date"></div>
+      <div class="ff"><label>Employment Category</label><select id="sf-ec"><option value="">Select</option><option>Permanent</option><option>Contract</option><option>Trainee / Apprentice</option></select></div>
+      <div class="ff"><label>ESI Number</label><input id="sf-esi" placeholder="ESI number"></div>
+      <div class="ff"><label>PF Number</label><input id="sf-pf" placeholder="PF number"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-out" onclick="closeOv('sm')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveS()">Save Staff Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONNEL INFO MODAL (full form) -->
+<div class="ov" id="info-modal">
+  <div class="modal" style="max-width:800px">
+    <h2 id="im-title">Personnel Information Record</h2>
+    <div class="modal-sub">Complete employee record as required under Factories &amp; Boiler Act</div>
+    <div class="fg fg2">
+      <!-- PERSONAL DETAILS -->
+      <div class="form-section-hd">Personal Details</div>
+      <div class="ff"><label>Employee ID *</label><input id="if-id" placeholder="e.g. 001 or S001"></div>
+      <div class="ff"><label>Record Type</label><select id="if-etype"><option value="worker">Worker</option><option value="staff">Staff</option></select></div>
+      <div class="ff" style="grid-column:1/-1"><label>Full Name (as per Aadhaar) *</label><input id="if-nm" placeholder="Full legal name"></div>
+      <div class="ff"><label>Father's / Husband's Name</label><input id="if-fn" placeholder="Father or Husband name"></div>
+      <div class="ff"><label>Gender</label><select id="if-gen"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="ff"><label>Date of Birth</label><input id="if-dob" type="date"></div>
+      <div class="ff"><label>Marital Status</label><select id="if-ms"><option value="">Select</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select></div>
+      <div class="ff"><label>Mobile Number</label><input id="if-mob" placeholder="10-digit mobile" maxlength="10"></div>
+      <div class="ff" style="grid-column:1/-1"><label>Permanent Address</label><textarea id="if-addr" rows="2" placeholder="Permanent residential address"></textarea></div>
+      <div class="ff" style="grid-column:1/-1"><label>Current Address (if different)</label><textarea id="if-caddr" rows="2" placeholder="Current address if different from permanent"></textarea></div>
+
+      <!-- IDENTITY DOCUMENTS -->
+      <div class="form-section-hd">Identity Documents</div>
+      <div class="ff"><label>Aadhaar Number</label><input id="if-aad" placeholder="12-digit Aadhaar" maxlength="14"></div>
+      <div class="ff"><label>Voter ID (optional)</label><input id="if-vid" placeholder="Voter ID number"></div>
+      <div class="ff"><label>PAN Card (if available)</label><input id="if-pan" placeholder="PAN card number" maxlength="10" style="text-transform:uppercase"></div>
+      <div class="ff"></div>
+
+      <!-- EMPLOYMENT DETAILS -->
+      <div class="form-section-hd">Employment Details</div>
+      <div class="ff"><label>Department *</label><select id="if-dept"><option value="">Select department</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option><option>Staff / Management</option></select></div>
+      <div class="ff"><label>Designation *</label><select id="if-desig"><option value="">Select designation</option>
+        <optgroup label="Cutting"><option>Cutting Operator</option><option>Cutting Helper</option><option>Cutting Supervisor</option></optgroup>
+        <optgroup label="Sewing"><option>Tailor — All Rounder</option><option>Tailor — Grade A</option><option>Tailor — Grade B</option><option>Tailor — Grade C</option><option>Sewing Helper</option><option>Batch Iron</option><option>Sewing Supervisor</option></optgroup>
+        <optgroup label="Kaja Button"><option>Kaja Button Operator</option><option>Kaja Button Helper</option></optgroup>
+        <optgroup label="Finishing"><option>Finishing Iron</option><option>Finishing Helper</option><option>Finishing Checker</option></optgroup>
+        <optgroup label="Staff"><option>Supervisor</option><option>HR Manager</option><option>Quality Control</option><option>Mechanic</option><option>Security</option><option>Accountant</option><option>Other Staff</option></optgroup>
+      </select></div>
+      <div class="ff"><label>Date of Joining</label><input id="if-doj" type="date"></div>
+      <div class="ff"><label>Employment Category</label><select id="if-ec"><option value="">Select</option><option>Permanent</option><option>Contract</option><option>Trainee / Apprentice</option></select></div>
+
+      <!-- WAGE / PAYMENT -->
+      <div class="form-section-hd">Wage &amp; Payment Details</div>
+      <div class="ff"><label>Daily Wage / Monthly Salary (Rs.)</label><input id="if-wage" type="number" placeholder="Enter amount"></div>
+      <div class="ff"><label>Payment Mode</label><select id="if-pm"><option value="">Select</option><option>Bank Transfer</option><option>Cash</option></select></div>
+      <div class="ff"><label>Bank Account Number</label><input id="if-bank" placeholder="Account number"></div>
+      <div class="ff"><label>IFSC Code</label><input id="if-ifsc" placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase"></div>
+
+      <!-- ESI / PF -->
+      <div class="form-section-hd">ESI &amp; PF Details</div>
+      <div class="ff"><label>ESI Number</label><input id="if-esi" placeholder="ESI registration number"></div>
+      <div class="ff"><label>PF Number</label><input id="if-pf" placeholder="PF account number"></div>
+
+      <!-- EMERGENCY CONTACT -->
+      <div class="form-section-hd">Emergency Contact</div>
+      <div class="ff"><label>Contact Person Name</label><input id="if-ecn" placeholder="Name of emergency contact"></div>
+      <div class="ff"><label>Relationship</label><input id="if-ecr" placeholder="e.g. Husband, Father, Brother"></div>
+      <div class="ff"><label>Emergency Phone Number</label><input id="if-ecp" placeholder="10-digit mobile" maxlength="10"></div>
+      <div class="ff"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-out" onclick="closeOv('info-modal')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveInfo()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SECS=['Cutting','Sewing','Kaja Button','Finishing'];
+const SC={Cutting:{c:'#9a3412',bg:'#fff7ed',bd:'#fdba74'},Sewing:{c:'#15803d',bg:'#f0fdf4',bd:'#86efac'},'Kaja Button':{c:'#5b21b6',bg:'#f5f3ff',bd:'#c4b5fd'},Finishing:{c:'#1d4ed8',bg:'#eff6ff',bd:'#bfdbfe'}};
+const BATCHES=['bA','bB','bC','bP'];
+const BL={bA:'Batch A',bB:'Batch B',bC:'Batch C',bP:'Packing'};
+const BC={bA:'#15803d',bB:'#b45309',bC:'#1d4ed8',bP:'#991b1b'};
+const BLT={bA:'#f0fdf4',bB:'#fffbeb',bC:'#eff6ff',bP:'#fef2f2'};
+
+const INIT_W=[
+{id:'15',name:'LOKESH R',wage:485,days_feb:20,account:'110233040448',aadhaar:'462623678624',type:'regular',section:'',role:'Worker'},
+{id:'40',name:'GOWARAMMA',wage:350,days_feb:22,account:'110230954465',aadhaar:'243573229243',type:'regular',section:'',role:'Worker'},
+{id:'33',name:'RENUKAMMA',wage:450,days_feb:23,account:'110227374202',aadhaar:'562469167602',type:'regular',section:'',role:'Worker'},
+{id:'45',name:'MANJULA M',wage:400,days_feb:17,account:'454108028643',aadhaar:'638152503234',type:'regular',section:'',role:'Worker'},
+{id:'52',name:'JYOTHI',wage:430,days_feb:22,account:'110231448536',aadhaar:'258115564858',type:'regular',section:'',role:'Worker'},
+{id:'55',name:'NETRAVATHI',wage:490,days_feb:14,account:'110230934296',aadhaar:'578043757475',type:'regular',section:'',role:'Worker'},
+{id:'61',name:'MANAGALA',wage:400,days_feb:23,account:'110235078492',aadhaar:'690460178311',type:'regular',section:'',role:'Worker'},
+{id:'63',name:'GOWARAMMA',wage:460,days_feb:17,account:'533101020256',aadhaar:'655023748087',type:'regular',section:'',role:'Worker'},
+{id:'66',name:'SUNANDA',wage:400,days_feb:22,account:'3867101011878',aadhaar:'426439728387',type:'regular',section:'',role:'Worker'},
+{id:'69',name:'NAGARATHANA',wage:410,days_feb:21,account:'110194508190',aadhaar:'523573186015',type:'regular',section:'',role:'Worker'},
+{id:'62',name:'MALA',wage:500,days_feb:22,account:'4602210044860',aadhaar:'953652793158',type:'regular',section:'',role:'Worker'},
+{id:'77',name:'PREMA',wage:450,days_feb:20,account:'110227681319',aadhaar:'735600132935',type:'regular',section:'',role:'Worker'},
+{id:'88',name:'SHANTHA',wage:490,days_feb:22,account:'3867101003597',aadhaar:'715172898856',type:'regular',section:'',role:'Worker'},
+{id:'95',name:'MAMATHA',wage:400,days_feb:23,account:'533101042611',aadhaar:'543602815416',type:'regular',section:'',role:'Worker'},
+{id:'99',name:'NAGAMANI',wage:400,days_feb:23,account:'533101037482',aadhaar:'87542417404',type:'regular',section:'',role:'Worker'},
+{id:'100',name:'RAJANNA',wage:490,days_feb:21,account:'110231308126',aadhaar:'640108926690',type:'regular',section:'',role:'Worker'},
+{id:'101',name:'KUMARASWAMY',wage:550,days_feb:18,account:'110231477205',aadhaar:'916965837510',type:'regular',section:'',role:'Worker'},
+{id:'107',name:'SUMA',wage:490,days_feb:18,account:'110231330568',aadhaar:'975298327373',type:'regular',section:'',role:'Worker'},
+{id:'115',name:'GIRIJAMMA',wage:400,days_feb:22,account:'110231318449',aadhaar:'688518557289',type:'regular',section:'',role:'Worker'},
+{id:'123',name:'MAMATHA GS',wage:450,days_feb:22,account:'110231539056',aadhaar:'785698210856',type:'regular',section:'',role:'Worker'},
+{id:'125',name:'GEETHANAJALI',wage:450,days_feb:22,account:'533101044395',aadhaar:'663977871906',type:'regular',section:'',role:'Worker'},
+{id:'129',name:'LAKSHMI',wage:410,days_feb:21,account:'4836101002287',aadhaar:'720702721707',type:'regular',section:'',role:'Worker'},
+{id:'130',name:'GEETHAMMA',wage:400,days_feb:23,account:'110225677290',aadhaar:'243700456039',type:'regular',section:'',role:'Worker'},
+{id:'139',name:'LAKSHMIKANTHA',wage:500,days_feb:22,account:'110231498112',aadhaar:'862498768765',type:'regular',section:'',role:'Worker'},
+{id:'147',name:'SHAKUNATHALA',wage:450,days_feb:8,account:'533108033144',aadhaar:'487697570556',type:'regular',section:'',role:'Worker'},
+{id:'148',name:'CHANDRAMMA',wage:485,days_feb:23,account:'110231535070',aadhaar:'348995595053',type:'regular',section:'',role:'Worker'},
+{id:'162',name:'CHANDRAMMA',wage:460,days_feb:23,account:'454119026439',aadhaar:'859210035187',type:'regular',section:'',role:'Worker'},
+{id:'170',name:'REKHA',wage:460,days_feb:20,account:'110231504851',aadhaar:'956996940167',type:'regular',section:'',role:'Worker'},
+{id:'172',name:'CHANDRAKALA',wage:480,days_feb:19,account:'110231298030',aadhaar:'532330340363',type:'regular',section:'',role:'Worker'},
+{id:'174',name:'MAHESH',wage:510,days_feb:21,account:'110230901223',aadhaar:'413918672114',type:'regular',section:'',role:'Worker'},
+{id:'177',name:'MANJULA R',wage:460,days_feb:22,account:'110165635446',aadhaar:'929698979377',type:'regular',section:'',role:'Worker'},
+{id:'180',name:'MANJULA',wage:400,days_feb:21,account:'110218047746',aadhaar:'411012660980',type:'regular',section:'',role:'Worker'},
+{id:'182',name:'GOWRAMMA',wage:500,days_feb:22,account:'110231284407',aadhaar:'578242081910',type:'regular',section:'',role:'Worker'},
+{id:'186',name:'VISHALAKSHI HM',wage:485,days_feb:21,account:'533101045510',aadhaar:'261046766857',type:'regular',section:'',role:'Worker'},
+{id:'192',name:'SHIVALEELA',wage:400,days_feb:22,account:'110231031241',aadhaar:'323787808279',type:'regular',section:'',role:'Worker'},
+{id:'212',name:'BHAGYAMMA HB',wage:480,days_feb:21,account:'110231303428',aadhaar:'743581460527',type:'regular',section:'',role:'Worker'},
+{id:'223',name:'NAGARTHANA V',wage:400,days_feb:16,account:'3047118007350',aadhaar:'604227875887',type:'regular',section:'',role:'Worker'},
+{id:'231',name:'JAYALAKSHMI',wage:470,days_feb:21,account:'110237244864',aadhaar:'556019733521',type:'regular',section:'',role:'Worker'},
+{id:'233',name:'SOWMYA',wage:410,days_feb:19,account:'110237906128',aadhaar:'502707695032',type:'regular',section:'',role:'Worker'},
+{id:'235',name:'VISHWANATHA',wage:495,days_feb:17,account:'110236614506',aadhaar:'62354867226',type:'regular',section:'',role:'Worker'},
+{id:'240',name:'NAGARTHANA',wage:475,days_feb:23,account:'533101031838',aadhaar:'771508641865',type:'regular',section:'',role:'Worker'},
+{id:'247',name:'CHANDRAPPA',wage:455,days_feb:22,account:'110240393583',aadhaar:'713578034447',type:'regular',section:'',role:'Worker'},
+{id:'264',name:'SUMA',wage:435,days_feb:10,account:'3867108001477',aadhaar:'758862554964',type:'regular',section:'',role:'Worker'},
+{id:'278',name:'SYDAHABHANU',wage:400,days_feb:22,account:'110214487617',aadhaar:'714586948252',type:'regular',section:'',role:'Worker'},
+{id:'285',name:'NAGAMANI',wage:470,days_feb:23,account:'533101039913',aadhaar:'755589428970',type:'regular',section:'',role:'Worker'},
+{id:'286',name:'SHUBHA',wage:435,days_feb:15,account:'431131000455',aadhaar:'294871294044',type:'regular',section:'',role:'Worker'},
+{id:'293',name:'VIJAYALAKSHMI',wage:470,days_feb:16,account:'110242193874',aadhaar:'980907310188',type:'regular',section:'',role:'Worker'},
+{id:'294',name:'PUTTAMMA',wage:450,days_feb:22,account:'110243140955',aadhaar:'363668502294',type:'regular',section:'',role:'Worker'},
+{id:'296',name:'SUMA',wage:420,days_feb:21,account:'454119024398',aadhaar:'546641960794',type:'regular',section:'',role:'Worker'},
+{id:'305',name:'NEEALAVATHI',wage:440,days_feb:23,account:'533101043052',aadhaar:'326292103028',type:'regular',section:'',role:'Worker'},
+{id:'309',name:'SAVITHA',wage:425,days_feb:20,account:'110242736394',aadhaar:'418668668424',type:'regular',section:'',role:'Worker'},
+{id:'326',name:'TIPPAMMA',wage:410,days_feb:21,account:'533101041454',aadhaar:'832007956204',type:'regular',section:'',role:'Worker'},
+{id:'329',name:'KAVITHA',wage:400,days_feb:22,account:'110249359487',aadhaar:'532182906521',type:'regular',section:'',role:'Worker'},
+{id:'330',name:'ASHA MC',wage:400,days_feb:11,account:'110248703862',aadhaar:'347836508852',type:'regular',section:'',role:'Worker'},
+{id:'349',name:'BHAGYA',wage:405,days_feb:23,account:'110251147686',aadhaar:'764768966496',type:'regular',section:'',role:'Worker'},
+{id:'375',name:'SUDHARANI',wage:460,days_feb:16,account:'533101043935',aadhaar:'321442208014',type:'regular',section:'',role:'Worker'},
+{id:'379',name:'JAYALAKSHMI',wage:405,days_feb:15,account:'110270777230',aadhaar:'286469094042',type:'regular',section:'',role:'Worker'},
+{id:'381',name:'ROOPA',wage:405,days_feb:21,account:'3867101006886',aadhaar:'678218030335',type:'regular',section:'',role:'Worker'},
+{id:'382',name:'THUSARA',wage:410,days_feb:19,account:'110260514198',aadhaar:'926533995809',type:'regular',section:'',role:'Worker'},
+{id:'388',name:'MYLARAHIA',wage:450,days_feb:20,account:'110260486267',aadhaar:'270456768310',type:'regular',section:'',role:'Worker'},
+{id:'392',name:'CHANDANA R',wage:450,days_feb:22,account:'110269339040',aadhaar:'774967051949',type:'regular',section:'',role:'Worker'},
+{id:'394',name:'POOJA',wage:400,days_feb:21,account:'110202825348',aadhaar:'713143235103',type:'regular',section:'',role:'Worker'},
+{id:'397',name:'MAHALAKSHMI',wage:400,days_feb:22,account:'110053617602',aadhaar:'720310893408',type:'regular',section:'',role:'Worker'},
+{id:'398',name:'LALATHAMMA',wage:400,days_feb:7,account:'3867101011217',aadhaar:'820386887317',type:'regular',section:'',role:'Worker'},
+{id:'405',name:'KARIYAMMA',wage:450,days_feb:20,account:'110231570675',aadhaar:'499261497868',type:'regular',section:'',role:'Worker'},
+{id:'406',name:'KENCHAMMA',wage:400,days_feb:12,account:'533101040886',aadhaar:'418522065004',type:'regular',section:'',role:'Worker'},
+{id:'408',name:'RENUKAMMA',wage:400,days_feb:23,account:'533101044427',aadhaar:'267642625851',type:'regular',section:'',role:'Worker'},
+{id:'416',name:'SUJATHA KS',wage:450,days_feb:17,account:'110250668437',aadhaar:'235029568763',type:'regular',section:'',role:'Worker'},
+{id:'419',name:'SHWETHA',wage:390,days_feb:23,account:'110231028442',aadhaar:'284432125947',type:'regular',section:'',role:'Worker'},
+{id:'425',name:'ASHA',wage:400,days_feb:22,account:'110272515846',aadhaar:'245391943345',type:'regular',section:'',role:'Worker'},
+{id:'426',name:'PAVITHRA',wage:450,days_feb:22,account:'110272566980',aadhaar:'463682400575',type:'regular',section:'',role:'Worker'},
+{id:'436',name:'PUSPAVATHI',wage:410,days_feb:22,account:'110276335895',aadhaar:'213689347186',type:'regular',section:'',role:'Worker'},
+{id:'437',name:'CHANDRAKALA',wage:400,days_feb:23,account:'110272042809',aadhaar:'869084620334',type:'regular',section:'',role:'Worker'},
+{id:'439',name:'KOMALA',wage:400,days_feb:21,account:'110272817970',aadhaar:'348358929517',type:'regular',section:'',role:'Worker'},
+{id:'440',name:'NETRAMMA DA',wage:400,days_feb:20,account:'110273969467',aadhaar:'888036357880',type:'regular',section:'',role:'Worker'},
+{id:'441',name:'SUCHITRA',wage:400,days_feb:23,account:'110276428968',aadhaar:'248367034863',type:'regular',section:'',role:'Worker'},
+{id:'444',name:'LATHA',wage:450,days_feb:18,account:'110274999492',aadhaar:'827734272968',type:'regular',section:'',role:'Worker'},
+{id:'446',name:'ANNAPORNA',wage:350,days_feb:23,account:'533101034320',aadhaar:'520687447225',type:'regular',section:'',role:'Worker'},
+{id:'449',name:'SALMABHANU',wage:400,days_feb:21,account:'533101035550',aadhaar:'785362416785',type:'regular',section:'',role:'Worker'},
+{id:'452',name:'SUDHARANI',wage:480,days_feb:20,account:'5952101003905',aadhaar:'703685169722',type:'regular',section:'',role:'Worker'},
+{id:'453',name:'PADMMA',wage:425,days_feb:21,account:'533101051434',aadhaar:'402549650133',type:'regular',section:'',role:'Worker'},
+{id:'457',name:'ROOPA',wage:420,days_feb:19,account:'110272391755',aadhaar:'648495432081',type:'regular',section:'',role:'Worker'},
+{id:'458',name:'DIVYA',wage:420,days_feb:17,account:'533101050925',aadhaar:'681195787103',type:'regular',section:'',role:'Worker'},
+{id:'204',name:'NEEALAVATHI TG',wage:460,days_feb:21,account:'110231402504',aadhaar:'301885513722',type:'regular',section:'',role:'Worker'},
+{id:'464',name:'KOMALA',wage:420,days_feb:22,account:'110276201740',aadhaar:'649152665693',type:'regular',section:'',role:'Worker'},
+{id:'476',name:'GAYATHRI',wage:410,days_feb:23,account:'1927131012434',aadhaar:'960372841840',type:'regular',section:'',role:'Worker'},
+{id:'496',name:'SHOBHA N',wage:400,days_feb:18,account:'533101049861',aadhaar:'441406166834',type:'regular',section:'',role:'Worker'},
+{id:'483',name:'AMBIKA',wage:410,days_feb:23,account:'699131003118',aadhaar:'748349839042',type:'regular',section:'',role:'Worker'},
+{id:'478',name:'DHARAKSYANI',wage:400,days_feb:23,account:'110204558627',aadhaar:'297682198248',type:'regular',section:'',role:'Worker'},
+{id:'477',name:'BHAVYA NM',wage:400,days_feb:23,account:'110114477613',aadhaar:'242874956386',type:'regular',section:'',role:'Worker'},
+{id:'455',name:'PREETHI',wage:420,days_feb:23,account:'110281287411',aadhaar:'914583879567',type:'regular',section:'',role:'Worker'},
+{id:'493',name:'SHILPA',wage:400,days_feb:19,account:'110281646084',aadhaar:'733929160864',type:'regular',section:'',role:'Worker'},
+{id:'486',name:'UMA  H D',wage:425,days_feb:21,account:'110285726625',aadhaar:'668244569102',type:'regular',section:'',role:'Worker'},
+{id:'427',name:'PRAJWAL TK',wage:420,days_feb:16,account:'110297125330',aadhaar:'254276090040',type:'regular',section:'',role:'Worker'},
+{id:'487',name:'LATHA',wage:435,days_feb:23,account:'454101033481',aadhaar:'351102784039',type:'regular',section:'',role:'Worker'},
+{id:'494',name:'CHANDRAKALA',wage:430,days_feb:22,account:'1199101024609',aadhaar:'796974905863',type:'regular',section:'',role:'Worker'},
+{id:'20',name:'SUDHAMANI',wage:490,days_feb:19,account:'110231020247',aadhaar:'297607282077',type:'regular',section:'',role:'Worker'},
+{id:'509',name:'RUHEENA BHANU',wage:450,days_feb:20,account:'411131000526',aadhaar:'891106218357',type:'regular',section:'',role:'Worker'},
+{id:'515',name:'PRAMEELA  G S',wage:450,days_feb:21,account:'110252979917',aadhaar:'613514152608',type:'regular',section:'',role:'Worker'},
+{id:'521',name:'REKHA  C',wage:450,days_feb:23,account:'533101048558',aadhaar:'228784956613',type:'regular',section:'',role:'Worker'},
+{id:'510',name:'RAGINI',wage:420,days_feb:21,account:'3867101007743',aadhaar:'599578290437',type:'regular',section:'',role:'Worker'},
+{id:'522',name:'MANASA',wage:420,days_feb:22,account:'110127153749',aadhaar:'481087828660',type:'regular',section:'',role:'Worker'},
+{id:'511',name:'SHASHIKALA',wage:420,days_feb:22,account:'533127002184',aadhaar:'788468335460',type:'regular',section:'',role:'Worker'},
+{id:'86',name:'PREMA',wage:485,days_feb:21,account:'699108033932',aadhaar:'695590302525',type:'regular',section:'',role:'Worker'},
+{id:'538',name:'LEELAVATHI',wage:440,days_feb:22,account:'533101044117',aadhaar:'935671126536',type:'regular',section:'',role:'Worker'},
+{id:'443',name:'RENUKAMMA',wage:470,days_feb:16,account:'14012010000199',aadhaar:'243837262453',type:'regular',section:'',role:'Worker'},
+{id:'488',name:'SHIVMMA',wage:450,days_feb:22,account:'110287736811',aadhaar:'624120080078',type:'regular',section:'',role:'Worker'},
+{id:'466',name:'RADHIKA',wage:415,days_feb:22,account:'110286952805',aadhaar:'637939075858',type:'regular',section:'',role:'Worker'},
+{id:'532',name:'MANJAPA',wage:420,days_feb:22,account:'110292580148',aadhaar:'630565873088',type:'regular',section:'',role:'Worker'},
+{id:'550',name:'GUNASHREE',wage:420,days_feb:22,account:'110295312932',aadhaar:'565579793756',type:'regular',section:'',role:'Worker'},
+{id:'554',name:'DEVARAJ',wage:430,days_feb:7,account:'533101047999',aadhaar:'334355448825',type:'regular',section:'',role:'Worker'},
+{id:'113',name:'KANTHRAJU',wage:430,days_feb:23,account:'110014787064',aadhaar:'628804317632',type:'regular',section:'',role:'Worker'},
+{id:'289',name:'GIRIJAMMA',wage:430,days_feb:21,account:'110243642121',aadhaar:'404078315069',type:'regular',section:'',role:'Worker'},
+{id:'207',name:'LATHA LB',wage:470,days_feb:20,account:'533101040849',aadhaar:'582228273742',type:'regular',section:'',role:'Worker'},
+{id:'552',name:'MAMATHA SHREE',wage:440,days_feb:10,account:'110195175260',aadhaar:'717293768350',type:'regular',section:'',role:'Worker'},
+{id:'547',name:'CHAITHRA HS',wage:420,days_feb:21,account:'110293179080',aadhaar:'591697801977',type:'regular',section:'',role:'Worker'},
+{id:'17',name:'JAYALAKSHMI K',wage:460,days_feb:21,account:'110231413203',aadhaar:'288604882661',type:'esi',section:'',role:'Worker'},
+{id:'22',name:'SRUTHI KS',wage:460,days_feb:23,account:'110231532721',aadhaar:'500580775745',type:'esi',section:'',role:'Worker'},
+{id:'24',name:'ROOPA N',wage:460,days_feb:21,account:'110231512410',aadhaar:'417464080873',type:'esi',section:'',role:'Worker'},
+{id:'26',name:'KAVITHA',wage:460,days_feb:20,account:'110227380600',aadhaar:'985390713693',type:'esi',section:'',role:'Worker'},
+{id:'50',name:'SHOBHA YM',wage:460,days_feb:21,account:'533101051557',aadhaar:'742932736245',type:'esi',section:'',role:'Worker'},
+{id:'54',name:'KY JAYALAKSHMI',wage:430,days_feb:21,account:'110231441244',aadhaar:'296833558562',type:'esi',section:'',role:'Worker'},
+{id:'57',name:'MANJAMMA',wage:490,days_feb:23,account:'110231541940',aadhaar:'912100924254',type:'esi',section:'',role:'Worker'},
+{id:'59',name:'ANURADHA',wage:460,days_feb:22,account:'110231425575',aadhaar:'919940278791',type:'esi',section:'',role:'Worker'},
+{id:'84',name:'DRAKSHYIAMMA G',wage:450,days_feb:23,account:'110231566962',aadhaar:'400463262965',type:'esi',section:'',role:'Worker'},
+{id:'85',name:'RAAJAESWARI E',wage:460,days_feb:20,account:'530101202046',aadhaar:'526977144295',type:'esi',section:'',role:'Worker'},
+{id:'117',name:'VEENA S',wage:460,days_feb:23,account:'110227210300',aadhaar:'532630035812',type:'esi',section:'',role:'Worker'},
+{id:'127',name:'LEELAVATHI R',wage:460,days_feb:18,account:'110212289359',aadhaar:'681965736207',type:'esi',section:'',role:'Worker'},
+{id:'132',name:'SUMITHRA',wage:440,days_feb:22,account:'110231324259',aadhaar:'376301106499',type:'esi',section:'',role:'Worker'},
+{id:'140',name:'GEETHA HG',wage:515,days_feb:20,account:'533101043384',aadhaar:'708243009915',type:'esi',section:'',role:'Worker'},
+{id:'145',name:'KEMPRAJAMMA',wage:460,days_feb:17,account:'110231488740',aadhaar:'987363314317',type:'esi',section:'',role:'Worker'},
+{id:'153',name:'REKHA HV',wage:410,days_feb:16,account:'533101047179',aadhaar:'982599503818',type:'esi',section:'',role:'Worker'},
+{id:'154',name:'PRATHIBHA MS',wage:460,days_feb:21,account:'110229732245',aadhaar:'498300968849',type:'esi',section:'',role:'Worker'},
+{id:'155',name:'THARA SP',wage:485,days_feb:23,account:'110231522290',aadhaar:'532855179132',type:'esi',section:'',role:'Worker'},
+{id:'156',name:'SIDDHAIAH',wage:475,days_feb:21,account:'679101024001',aadhaar:'694383203596',type:'esi',section:'',role:'Worker'},
+{id:'169',name:'SOWMYA',wage:465,days_feb:21,account:'110231540667',aadhaar:'723764898261',type:'esi',section:'',role:'Worker'},
+{id:'175',name:'VASANTHAKUMARI',wage:350,days_feb:22,account:'533101044652',aadhaar:'431525161202',type:'esi',section:'',role:'Worker'},
+{id:'176',name:'KALPANA SR',wage:450,days_feb:22,account:'533101041865',aadhaar:'845312985888',type:'esi',section:'',role:'Worker'},
+{id:'183',name:'NAGARTNA BK',wage:410,days_feb:21,account:'3867108001031',aadhaar:'334277268558',type:'esi',section:'',role:'Worker'},
+{id:'189',name:'AMBIKA',wage:480,days_feb:21,account:'110061985740',aadhaar:'857928991346',type:'esi',section:'',role:'Worker'},
+{id:'195',name:'ANITHA',wage:450,days_feb:22,account:'533101047694',aadhaar:'585977777248',type:'esi',section:'',role:'Worker'},
+{id:'201',name:'SWETHA',wage:430,days_feb:22,account:'110231445579',aadhaar:'561536468332',type:'esi',section:'',role:'Worker'},
+{id:'202',name:'SHARDHABAI',wage:350,days_feb:19,account:'533101045008',aadhaar:'936733304094',type:'esi',section:'',role:'Worker'},
+{id:'209',name:'CHITRA DL',wage:485,days_feb:20,account:'3847118030294',aadhaar:'243876180903',type:'esi',section:'',role:'Worker'},
+{id:'225',name:'MANJULA',wage:400,days_feb:20,account:'1927131002489',aadhaar:'500995477578',type:'esi',section:'',role:'Worker'},
+{id:'251',name:'GANGAMMA HL',wage:405,days_feb:21,account:'110162859247',aadhaar:'738939835618',type:'esi',section:'',role:'Worker'},
+{id:'265',name:'YASHODHA MR',wage:405,days_feb:21,account:'110237813103',aadhaar:'872881087152',type:'esi',section:'',role:'Worker'},
+{id:'267',name:'SHAINA',wage:400,days_feb:21,account:'454108029999',aadhaar:'535161380234',type:'esi',section:'',role:'Worker'},
+{id:'291',name:'RESHMA',wage:380,days_feb:18,account:'533101041293',aadhaar:'992715423565',type:'esi',section:'',role:'Worker'},
+{id:'306',name:'SHOBHA L',wage:410,days_feb:22,account:'110242732495',aadhaar:'409964836978',type:'esi',section:'',role:'Worker'},
+{id:'331',name:'INDRAMMA KC',wage:380,days_feb:23,account:'110251214863',aadhaar:'863377069827',type:'esi',section:'',role:'Worker'},
+{id:'337',name:'SHIVAMMA DR',wage:400,days_feb:23,account:'533101048461',aadhaar:'208957902454',type:'esi',section:'',role:'Worker'},
+{id:'338',name:'RATHNAMMA G',wage:380,days_feb:22,account:'110248639963',aadhaar:'969641917974',type:'esi',section:'',role:'Worker'},
+{id:'348',name:'SHIVAMMA',wage:405,days_feb:23,account:'110248860957',aadhaar:'335753405846',type:'esi',section:'',role:'Worker'},
+{id:'366',name:'YASHODHA',wage:450,days_feb:22,account:'699118000768',aadhaar:'503620836115',type:'esi',section:'',role:'Worker'},
+{id:'407',name:'CHAITRA',wage:400,days_feb:21,account:'110198445360',aadhaar:'995250967146',type:'esi',section:'',role:'Worker'},
+{id:'49',name:'SUMALATHA',wage:430,days_feb:19,account:'110231562009',aadhaar:'894701755547',type:'esi',section:'',role:'Worker'},
+{id:'222',name:'L KUMAR',wage:510,days_feb:20,account:'110233032747',aadhaar:'502498384494',type:'esi',section:'',role:'Worker'},
+{id:'164',name:'LALITHAMMA',wage:460,days_feb:23,account:'110223768684',aadhaar:'740193400066',type:'esi',section:'',role:'Worker'},
+{id:'25',name:'SUJATHA D M',wage:450,days_feb:21,account:'867120000158',aadhaar:'314430896311',type:'esi',section:'',role:'Worker'},
+{id:'12',name:'VIJAY LAKSHMI',wage:485,days_feb:20,account:'110233050440',aadhaar:'248668787336',type:'esi',section:'',role:'Worker'},
+{id:'206',name:'ASHA B',wage:480,days_feb:21,account:'110231005173',aadhaar:'279724781376',type:'esi',section:'',role:'Worker'},
+{id:'324',name:'SUSHILA',wage:435,days_feb:16,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'378',name:'ASHAMBHANU',wage:430,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'400',name:'RAGUNATHA',wage:500,days_feb:16,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'403',name:'AYESHA',wage:400,days_feb:17,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'415',name:'BHUVANESHWARI',wage:420,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'462',name:'NEETHARVATHI',wage:480,days_feb:20,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'467',name:'RADHA',wage:420,days_feb:21,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'469',name:'JABEEN TAJ',wage:465,days_feb:21,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'475',name:'BHAVYA',wage:400,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'468',name:'MAMATHA',wage:410,days_feb:13,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'481',name:'SANDYA RANI',wage:440,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'448',name:'MADHU',wage:490,days_feb:19,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'105',name:'SUPRIYA',wage:420,days_feb:5,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'104',name:'SOWMYA',wage:420,days_feb:7,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'T86',name:'SUDHARANI',wage:440,days_feb:5,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'553',name:'VANJAKSHI',wage:420,days_feb:8,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'482',name:'BASAVARAJ',wage:460,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'516',name:'ASHA',wage:450,days_feb:23,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'529',name:'RATHANAMMA',wage:410,days_feb:21,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'502',name:'SANIYA MIRZA',wage:410,days_feb:19,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'518',name:'SHASHIKALA',wage:400,days_feb:23,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'523',name:'BARTHI',wage:430,days_feb:12,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'530',name:'PARAMMA',wage:430,days_feb:23,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'533',name:'RAKSHITHA',wage:440,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'540',name:'MANJULAMMA',wage:410,days_feb:16,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'548',name:'MALESH',wage:420,days_feb:22,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'},
+{id:'535',name:'MANJULA',wage:410,days_feb:21,account:'',aadhaar:'',type:'noacc',section:'',role:'Worker'}
+];
+const INIT_S=[
+{id:'8',name:'VARADARAJU',role:'Staff',salary:16500,aadhaar:'351700279388',account:'533108033162'},
+{id:'295',name:'PARAMESH',role:'Staff',salary:34000,aadhaar:'957788589044',account:'699118001138'},
+{id:'323',name:'RANGANATHA',role:'Staff',salary:17500,aadhaar:'351052403777',account:'110251145446'},
+{id:'S003',name:'SVITHRAMMA',role:'Staff',salary:12500,aadhaar:'455116407454',account:'110212138224'},
+{id:'42',name:'DEEPA',role:'Staff',salary:14000,aadhaar:'3920448228954',account:'110231337602'},
+{id:'S001',name:'NAGARAJU',role:'Staff',salary:12480,aadhaar:'612023561627',account:'110233022068'},
+{id:'401',name:'UMASHANKAR',role:'Staff',salary:20000,aadhaar:'',account:''},
+{id:'545',name:'KRISHANA MURTHY',role:'Staff',salary:15000,aadhaar:'',account:''},
+{id:'514',name:'JITHENDRA',role:'Staff',salary:16000,aadhaar:'',account:''},
+{id:'500',name:'AJAN MURTHY',role:'Staff',salary:16500,aadhaar:'',account:''},
+{id:'528',name:'BASAVARAJ',role:'Staff',salary:25000,aadhaar:'',account:''},
+{id:'459',name:'MADHU',role:'Staff',salary:15000,aadhaar:'',account:''},
+{id:'473',name:'HARISH',role:'Staff',salary:14000,aadhaar:'',account:''},
+{id:'S008',name:'NAGESHA',role:'Staff',salary:12500,aadhaar:'',account:''}
+];
+
+let DB={
+  workers:JSON.parse(localStorage.getItem('pe4_w')||'null')||JSON.parse(JSON.stringify(INIT_W)),
+  staff:JSON.parse(localStorage.getItem('pe4_s')||'null')||JSON.parse(JSON.stringify(INIT_S)),
+  info:JSON.parse(localStorage.getItem('pe4_info')||'{}'),
+  aw:JSON.parse(localStorage.getItem('pe4_aw')||'{}'),
+  as:JSON.parse(localStorage.getItem('pe4_as')||'{}'),
+  prod:JSON.parse(localStorage.getItem('pe4_pd')||'{}'),
+  notes:localStorage.getItem('pe4_nt')||'',
+  left:JSON.parse(localStorage.getItem('pe4_left')||'[]')
+};
+function persist(){
+  // Save to localStorage immediately (works offline too)
+  localStorage.setItem('pe4_w',JSON.stringify(DB.workers));
+  localStorage.setItem('pe4_s',JSON.stringify(DB.staff));
+  localStorage.setItem('pe4_info',JSON.stringify(DB.info));
+  localStorage.setItem('pe4_aw',JSON.stringify(DB.aw));
+  localStorage.setItem('pe4_as',JSON.stringify(DB.as));
+  localStorage.setItem('pe4_pd',JSON.stringify(DB.prod));
+  localStorage.setItem('pe4_nt',DB.notes);
+  localStorage.setItem('pe4_left',JSON.stringify(DB.left));
+  // Sync to Firebase in background
+  if(window.fbSave){
+    window.setFbStatus&&window.setFbStatus('syncing');
+    Promise.all([
+      window.fbSave('workers',DB.workers),
+      window.fbSave('staff',  DB.staff),
+      window.fbSave('info',   DB.info),
+      window.fbSave('aw',     DB.aw),
+      window.fbSave('as',     DB.as),
+      window.fbSave('prod',   DB.prod),
+      window.fbSave('notes',  DB.notes),
+      window.fbSave('left',   DB.left)
+    ]).then(function(){
+      window.setFbStatus&&window.setFbStatus('ok','Saved & synced');
+    }).catch(function(){
+      window.setFbStatus&&window.setFbStatus('offline','Saved locally');
+    });
+  }
+}
+const today=()=>new Date().toISOString().split('T')[0];
+const fmt=n=>Number(n||0).toLocaleString('en-IN');
+const mAad=a=>(!a||String(a).length<4)?'—':'XXXX XXXX '+String(a).slice(-4);
+const mAcc=a=>(!a||String(a).length<4)?(a||'—'):'...'+String(a).slice(-4);
+const ini=n=>(n||'?').trim().split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const dash=v=>v||'—';
+
+function secBadge(s){const c=SC[s];if(!c)return`<span class="bd bd-gray">${s||'—'}</span>`;return`<span class="bd" style="background:${c.bg};color:${c.c};border:1px solid ${c.bd}">${s}</span>`;}
+function typBadge(t){if(t==='esi')return'<span class="bd bd-amber">ESI / PF</span>';if(t==='noacc')return'<span class="bd bd-red">No Account</span>';return'<span class="bd bd-blue">Regular</span>';}
+function attBadge(st){if(st==='P')return'<span class="bd bd-green">Present</span>';if(st==='A')return'<span class="bd bd-red">Absent</span>';if(st==='H')return'<span class="bd bd-amber">Half Day</span>';return'<span style="color:var(--ink5)">—</span>';}
+
+function toast(msg,type='t-ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' on';clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);}
+
+// NAV
+const PNAMES={dashboard:'Dashboard','att-w':'Worker Attendance','att-s':'Staff Attendance',prod:'Production',eod:'EOD Report',mprod:'Month Production',workers:'Workers',staff:'Staff',info:'Personnel Info',wages:'Wages & Salary',left:'Left Workers'};
+function nav(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.sb-btn').forEach(b=>{if(b.getAttribute('onclick')?.includes("'"+id+"'"))b.classList.add('on');});
+  document.getElementById('tb-cur').textContent=PNAMES[id]||id;
+  ({dashboard:rDash,'att-w':rAW,'att-s':rAS,prod:lProd,eod:rEOD,mprod:rMProd,workers:renderW,staff:renderS,info:renderInfo,wages:renderWg,left:renderLeft})[id]?.();
+}
+
+function init(){
+  const n=new Date(),h=n.getHours();
+  document.getElementById('greet').textContent=h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+  document.getElementById('tb-date').textContent=n.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('nb-w').textContent=DB.workers.length;
+  document.getElementById('nb-s').textContent=DB.staff.length;
+  document.getElementById('nb-left').textContent=DB.left.length;
+  // Set current month/year in wages dropdowns
+  const curMon=n.getMonth();const curYr=String(n.getFullYear());
+  const wgMon=document.getElementById('wg-mon');if(wgMon)wgMon.selectedIndex=curMon;
+  const wgYr=document.getElementById('wg-yr');if(wgYr){for(var i=0;i<wgYr.options.length;i++){if(wgYr.options[i].value===curYr){wgYr.selectedIndex=i;break;}}}
+  const wgMonS=document.getElementById('wg-mon-s');if(wgMonS)wgMonS.selectedIndex=curMon;
+  const wgYrS=document.getElementById('wg-yr-s');if(wgYrS){for(var i=0;i<wgYrS.options.length;i++){if(wgYrS.options[i].value===curYr){wgYrS.selectedIndex=i;break;}}}
+  // Set default date range to current month for date-wise
+  const firstDay=curYr+'-'+String(curMon+1).padStart(2,'0')+'-01';
+  const todayStr=n.toISOString().split('T')[0];
+  const df=document.getElementById('wg-date-from');if(df)df.value=firstDay;
+  const dt=document.getElementById('wg-date-to');if(dt)dt.value=todayStr;
+  setInterval(()=>{document.getElementById('sb-clk').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+}
+
+// DASHBOARD
+function rDash(){
+  const tk=today(),aw=DB.aw[tk]||{},as=DB.as[tk]||{};
+  document.getElementById('d-secs').innerHTML=SECS.map(s=>{
+    const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
+    return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:15px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">workers present</div></div>`;
+  }).join('');
+  const pd=DB.prod[tk]||{};
+  document.getElementById('d-prods').innerHTML=BATCHES.map(b=>{
+    const d=parseInt(pd[b+'_d'])||0,t=parseInt(pd[b+'_t'])||0,pct=t>0?Math.min(100,Math.round(d/t*100)):0;
+    return`<div class="kc" style="--kc:${BC[b]}"><div class="kc-bar"></div><div class="kc-lbl">${BL[b]}</div><div class="kc-val">${d}</div><div class="kc-sub">of ${t||'—'} target &middot; ${pct}%</div><div class="prog-track" style="margin-top:10px"><div class="prog-fill" style="background:${BC[b]};width:${pct}%"></div></div></div>`;
+  }).join('');
+  document.getElementById('d-tw').textContent=DB.workers.length;
+  document.getElementById('d-wp').textContent=DB.workers.filter(w=>aw[w.id]==='P').length;
+  document.getElementById('d-sp').textContent=DB.staff.filter(s=>as[s.id]==='P').length;
+  document.getElementById('d-st').textContent=DB.staff.length;
+  const snap=DB.workers.slice(0,12);
+  document.getElementById('d-snap-c').textContent='Showing '+snap.length;
+  document.getElementById('d-snap').innerHTML=snap.map(w=>`<tr><td class="t-id">${w.id}</td><td class="t-name">${w.name}</td><td>${secBadge(w.section)}</td><td class="t-wage">Rs.${fmt(w.wage)}</td><td>${typBadge(w.type)}</td><td>${attBadge(aw[w.id])}</td></tr>`).join('');
+}
+
+// WORKER ATTENDANCE
+function rAW(){
+  const tk=today(),aw=DB.aw[tk]||{};
+  // Summary KPIs — include all sections
+  document.getElementById('aw-summ').innerHTML=SECS.map(s=>{
+    const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
+    return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:14px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">${e.filter(w=>aw[w.id]==='A').length} absent</div></div>`;
+  }).join('');
+  if(!DB.workers.length){document.getElementById('aw-body').innerHTML='<div class="empty">No workers found.</div>';return;}
+  // Show all sections + catch workers with no section
+  const unassigned=DB.workers.filter(w=>!w.section||!SECS.includes(w.section));
+  const secHtml=SECS.map(s=>{
+    const c=SC[s],e=DB.workers.filter(w=>w.section===s);if(!e.length)return'';
+    const p=e.filter(w=>aw[w.id]==='P').length;
+    return`<div class="att-sec" style="--as:${c.c}">
+      <div class="att-sec-hd"><div class="att-sec-hd-l"><div class="att-stripe"></div><div class="att-sec-name">${s} Section</div></div><div class="att-pill" id="ap-${s.replace(/ /g,'-')}">${p} / ${e.length} Present</div></div>
+      ${e.map(w=>`<div class="att-row">
+        <div class="att-row-l">
+          <div class="att-av" style="background:${c.bg};color:${c.c}">${ini(w.name)}</div>
+          <div><div class="att-name">${w.name}</div><div class="att-meta">${w.id} &middot; ${w.role||'Worker'} &middot; Rs.${fmt(w.wage)}/day${w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':''}</div></div>
+        </div>
+        <div class="att-tgl" id="wt-${w.id}">
+          <button class="tp ${aw[w.id]==='P'?'on':''}" onclick="markW('${w.id}','P')">Present</button>
+          <button class="ta ${aw[w.id]==='A'?'on':''}" onclick="markW('${w.id}','A')">Absent</button>
+          <button class="th ${aw[w.id]==='H'?'on':''}" onclick="markW('${w.id}','H')">Half Day</button>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+  // Unassigned workers section
+  const unassHtml=unassigned.length?`<div class="att-sec" style="--as:#64748b">
+    <div class="att-sec-hd"><div class="att-sec-hd-l"><div class="att-stripe" style="background:#64748b"></div><div class="att-sec-name">All Workers (Section Not Assigned)</div></div><div class="att-pill" id="ap-unassigned">${unassigned.filter(w=>aw[w.id]==='P').length} / ${unassigned.length} Present</div></div>
+    ${unassigned.map(w=>`<div class="att-row">
+      <div class="att-row-l">
+        <div class="att-av" style="background:#f1f5f9;color:#475569">${ini(w.name)}</div>
+        <div><div class="att-name">${w.name}</div><div class="att-meta">${w.id} &middot; ${w.role||'Worker'} &middot; Rs.${fmt(w.wage)}/day${w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':''}</div></div>
+      </div>
+      <div class="att-tgl" id="wt-${w.id}">
+        <button class="tp ${aw[w.id]==='P'?'on':''}" onclick="markW('${w.id}','P')">Present</button>
+        <button class="ta ${aw[w.id]==='A'?'on':''}" onclick="markW('${w.id}','A')">Absent</button>
+        <button class="th ${aw[w.id]==='H'?'on':''}" onclick="markW('${w.id}','H')">Half Day</button>
+      </div>
+    </div>`).join('')}
+  </div>`:'';
+  document.getElementById('aw-body').innerHTML=secHtml+unassHtml;
+}
+function markW(id,st){const tk=today();if(!DB.aw[tk])DB.aw[tk]={};DB.aw[tk][id]=st;persist();const g=document.getElementById('wt-'+id);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}updAWSumm();}
+function updAWSumm(){const tk=today(),aw=DB.aw[tk]||{};SECS.forEach(s=>{const key=s.replace(/ /g,'-'),e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;const el=document.getElementById('ap-'+key);if(el)el.textContent=`${p} / ${e.length} Present`;});document.getElementById('aw-summ').innerHTML=SECS.map(s=>{const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:14px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">${e.filter(w=>aw[w.id]==='A').length} absent</div></div>`;}).join('');}
+function markAll(type){const tk=today();if(type==='w'){if(!DB.aw[tk])DB.aw[tk]={};DB.workers.forEach(w=>{DB.aw[tk][w.id]='P';});persist();rAW();}else{if(!DB.as[tk])DB.as[tk]={};DB.staff.forEach(s=>{DB.as[tk][s.id]='P';});persist();rAS();}toast('All marked Present');}
+function saveAtt(t){persist();toast(t==='w'?'Worker attendance saved':'Staff attendance saved');}
+
+// STAFF ATTENDANCE
+function rAS(){
+  const tk=today(),as=DB.as[tk]||{};
+  const p=DB.staff.filter(s=>as[s.id]==='P').length,a=DB.staff.filter(s=>as[s.id]==='A').length;
+  document.getElementById('as-summ').innerHTML=`
+    <div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Total Staff</div><div class="kc-val">${DB.staff.length}</div></div>
+    <div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Present</div><div class="kc-val">${p}</div></div>
+    <div class="kc" style="--kc:var(--red)"><div class="kc-bar"></div><div class="kc-lbl">Absent</div><div class="kc-val">${a}</div></div>`;
+  document.getElementById('as-body').innerHTML=`<div class="att-sec" style="--as:var(--violet)">
+    <div class="att-sec-hd"><div class="att-sec-hd-l"><div class="att-stripe"></div><div class="att-sec-name">All Staff Members</div></div><div class="att-pill" id="ap-staff">${p} / ${DB.staff.length} Present</div></div>
+    ${DB.staff.map(s=>`<div class="att-row">
+      <div class="att-row-l">
+        <div class="att-av" style="background:var(--violets);color:var(--violet)">${ini(s.name)}</div>
+        <div><div class="att-name">${s.name}</div><div class="att-meta">${s.id} &middot; ${s.role} &middot; Rs.${fmt(s.salary)}/month</div></div>
+      </div>
+      <div class="att-tgl" id="st-${s.id}">
+        <button class="tp ${as[s.id]==='P'?'on':''}" onclick="markS('${s.id}','P')">Present</button>
+        <button class="ta ${as[s.id]==='A'?'on':''}" onclick="markS('${s.id}','A')">Absent</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+function markS(id,st){const tk=today();if(!DB.as[tk])DB.as[tk]={};DB.as[tk][id]=st;persist();const g=document.getElementById('st-'+id);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}const as=DB.as[tk]||{},p=DB.staff.filter(s=>as[s.id]==='P').length,a=DB.staff.filter(s=>as[s.id]==='A').length;const el=document.getElementById('ap-staff');if(el)el.textContent=`${p} / ${DB.staff.length} Present`;document.getElementById('as-summ').innerHTML=`<div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Total Staff</div><div class="kc-val">${DB.staff.length}</div></div><div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Present</div><div class="kc-val">${p}</div></div><div class="kc" style="--kc:var(--red)"><div class="kc-bar"></div><div class="kc-lbl">Absent</div><div class="kc-val">${a}</div></div>`;}
+
+// PRODUCTION
+// PRODUCTION — with date navigation
+const PROD_FIELDS=['t','d','s','c']; // target, done, style, comment
+let _prodViewDate=null; // null = today
+
+function prodDate(){
+  const el=document.getElementById('prod-date');
+  return el?.value||today();
+}
+function prodNavDate(delta){
+  const cur=new Date(prodDate()+'T00:00:00');
+  cur.setDate(cur.getDate()+delta);
+  const nd=cur.toISOString().split('T')[0];
+  document.getElementById('prod-date').value=nd;
+  lProd();
+}
+function lProd(){
+  const dt=prodDate();
+  // set date picker to today on first load
+  const dp=document.getElementById('prod-date');
+  if(!dp.value) dp.value=today();
+  const isToday=dt===today();
+  const banner=document.getElementById('prod-viewing-banner');
+  const lbl=document.getElementById('prod-view-date-lbl');
+  if(isToday){banner.style.display='none';}
+  else{
+    banner.style.display='block';
+    const d=new Date(dt+'T00:00:00');
+    lbl.textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+  const pd=DB.prod[dt]||{};
+  BATCHES.forEach(b=>{
+    PROD_FIELDS.forEach(f=>{
+      const e=document.getElementById(b+'_'+f);
+      if(e)e.value=pd[b+'_'+f]||'';
+    });
+    upd(b);
+  });
+  const dl=document.getElementById('daily-log');
+  if(dl)dl.value=pd['daily_log']||'';
+}
+function upd(b){
+  const t=parseFloat(document.getElementById(b+'_t')?.value)||0,d=parseFloat(document.getElementById(b+'_d')?.value)||0;
+  const pct=t>0?Math.min(100,Math.round(d/t*100)):0;
+  const bar=document.getElementById(b+'_bar'),pe=document.getElementById(b+'_pct');
+  if(bar)bar.style.width=pct+'%';if(pe)pe.textContent=pct+'%';
+}
+function saveProd(){
+  const dt=prodDate();
+  const pd=DB.prod[dt]||{};
+  BATCHES.forEach(b=>{
+    PROD_FIELDS.forEach(f=>{pd[b+'_'+f]=document.getElementById(b+'_'+f)?.value||'';});
+  });
+  const dl=document.getElementById('daily-log');
+  if(dl)pd['daily_log']=dl.value;
+  DB.prod[dt]=pd;
+  persist();
+  const isToday=dt===today();
+  toast(isToday?'Production saved for today':'Production saved for '+dt);
+}
+function clearProd(){
+  BATCHES.forEach(b=>{PROD_FIELDS.forEach(f=>{const e=document.getElementById(b+'_'+f);if(e)e.value='';});upd(b);});
+  const dl=document.getElementById('daily-log');if(dl)dl.value='';
+}
+
+// MONTH PRODUCTION
+const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+let _mpY=new Date().getFullYear(),_mpM=new Date().getMonth(); // 0-indexed
+
+function rMProd(){
+  document.getElementById('mprod-month-lbl').textContent=MONTH_NAMES[_mpM]+' '+_mpY;
+  renderMProd();
+}
+function mprodPrevMonth(){if(_mpM===0){_mpM=11;_mpY--;}else _mpM--;rMProd();}
+function mprodNextMonth(){if(_mpM===11){_mpM=0;_mpY++;}else _mpM++;rMProd();}
+
+function renderMProd(){
+  const y=_mpY,m=_mpM;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const totals={bA:0,bB:0,bC:0,bP:0,grand:0};
+  let workingDays=0;
+  const rows=[];
+  const allComments={bA:[],bB:[],bC:[],bP:[]};
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const pd=DB.prod[dateStr];
+    if(!pd)continue;
+    // Check if any batch has data
+    const hasData=BATCHES.some(b=>parseInt(pd[b+'_d'])||0);
+    if(!hasData&&!pd.daily_log)continue;
+    workingDays++;
+    const bA=parseInt(pd['bA_d'])||0,bB=parseInt(pd['bB_d'])||0,bC=parseInt(pd['bC_d'])||0,bP=parseInt(pd['bP_d'])||0;
+    const dayTotal=bA+bB+bC+bP;
+    totals.bA+=bA;totals.bB+=bB;totals.bC+=bC;totals.bP+=bP;totals.grand+=dayTotal;
+
+    // Collect comments
+    ['bA','bB','bC','bP'].forEach(b=>{if(pd[b+'_c']?.trim())allComments[b].push({date:dateStr,comment:pd[b+'_c'],done:parseInt(pd[b+'_d'])||0,style:pd[b+'_s']||''});});
+
+    const dow=new Date(dateStr+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short'});
+    const dayNum=new Date(dateStr+'T00:00:00').getDate();
+    const log=pd['daily_log']?.trim()||'';
+
+    rows.push(`<tr ${dateStr===today()?'style="background:#eff6ff"':''}>
+      <td><div style="font-weight:600;font-size:12.5px;color:var(--ink)">${dayNum} ${dow}</div><div style="font-size:10.5px;color:var(--ink4)">${new Date(dateStr+'T00:00:00').toLocaleDateString('en-IN',{month:'short',year:'numeric'})}</div></td>
+      <td><div style="font-family:var(--mono);font-weight:600;color:#15803d;font-size:13px">${bA||'—'}</div>${pd['bA_s']?`<div style="font-size:10px;color:var(--ink4);margin-top:2px">${pd['bA_s']}</div>`:''}</td>
+      <td><div style="font-family:var(--mono);font-weight:600;color:#b45309;font-size:13px">${bB||'—'}</div>${pd['bB_s']?`<div style="font-size:10px;color:var(--ink4);margin-top:2px">${pd['bB_s']}</div>`:''}</td>
+      <td><div style="font-family:var(--mono);font-weight:600;color:#1d4ed8;font-size:13px">${bC||'—'}</div>${pd['bC_s']?`<div style="font-size:10px;color:var(--ink4);margin-top:2px">${pd['bC_s']}</div>`:''}</td>
+      <td><div style="font-family:var(--mono);font-weight:600;color:#991b1b;font-size:13px">${bP||'—'}</div>${pd['bP_s']?`<div style="font-size:10px;color:var(--ink4);margin-top:2px">${pd['bP_s']}</div>`:''}</td>
+      <td style="font-family:var(--mono);font-size:14px;font-weight:800;color:var(--ink)">${dayTotal||'—'}</td>
+      <td style="font-size:12px;color:var(--ink3);max-width:240px">${log?`<span style="line-height:1.5">${log.replace(/\n/g,'<br>')}</span>`:'<span style="color:var(--ink5)">—</span>'}</td>
+      </tr>`);
+  }
+
+  // Totals row
+  if(rows.length){
+    rows.push(`<tr style="background:var(--bg);font-weight:800;border-top:2px solid var(--bg3)">
+      <td style="font-size:12px;font-weight:700;color:var(--ink3)">${workingDays} days recorded</td>
+      <td style="font-family:var(--mono);color:#15803d;font-size:14px;font-weight:800">${totals.bA}</td>
+      <td style="font-family:var(--mono);color:#b45309;font-size:14px;font-weight:800">${totals.bB}</td>
+      <td style="font-family:var(--mono);color:#1d4ed8;font-size:14px;font-weight:800">${totals.bC}</td>
+      <td style="font-family:var(--mono);color:#991b1b;font-size:14px;font-weight:800">${totals.bP}</td>
+      <td style="font-family:var(--mono);color:var(--ink);font-size:15px;font-weight:800">${totals.grand}</td>
+      <td></td></tr>`);
+  }
+
+  document.getElementById('mprod-days-tbl').innerHTML=rows.length?rows.join(''):'<tr><td colspan="7"><div class="empty">No production data for this month</div></td></tr>';
+  document.getElementById('mprod-days-cnt').textContent=workingDays+' working day'+(workingDays!==1?'s':'');
+
+  // Monthly KPI cards
+  const kpiColors={bA:'#15803d',bB:'#b45309',bC:'#1d4ed8',bP:'#991b1b'};
+  const kpiLabels={bA:'Batch A',bB:'Batch B',bC:'Batch C',bP:'Packing'};
+  document.getElementById('mprod-totals').innerHTML=
+    Object.keys(totals).filter(k=>k!=='grand').map(b=>`<div class="kc" style="--kc:${kpiColors[b]}"><div class="kc-bar"></div><div class="kc-lbl">${kpiLabels[b]}</div><div class="kc-val">${totals[b].toLocaleString('en-IN')}</div><div class="kc-sub">pieces this month</div></div>`).join('')+
+    `<div class="kc" style="--kc:var(--ink)"><div class="kc-bar"></div><div class="kc-lbl">Total Production</div><div class="kc-val">${totals.grand.toLocaleString('en-IN')}</div><div class="kc-sub">all batches combined</div></div>`;
+
+  // Comments section — by batch
+  const bNames={bA:'Batch A',bB:'Batch B',bC:'Batch C',bP:'Packing'};
+  const bColors={bA:'#15803d',bB:'#b45309',bC:'#1d4ed8',bP:'#991b1b'};
+  const bBg={bA:'#f0fdf4',bB:'#fffbeb',bC:'#eff6ff',bP:'#fef2f2'};
+  let commHtml='';
+  BATCHES.forEach(b=>{
+    const cmts=allComments[b];
+    if(!cmts.length)return;
+    commHtml+=`<div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:${bColors[b]};margin-bottom:10px;padding-bottom:7px;border-bottom:2px solid ${bBg[b]}">${bNames[b]} — ${cmts.length} comment${cmts.length!==1?'s':''}</div>
+      ${cmts.map(c=>{
+        const dd=new Date(c.date+'T00:00:00');
+        const dlbl=dd.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+        return`<div style="display:flex;gap:12px;padding:10px 12px;border-radius:var(--r);background:${bBg[b]};border:1px solid ${bColors[b]}22;margin-bottom:8px">
+          <div style="flex-shrink:0;min-width:80px">
+            <div style="font-size:11.5px;font-weight:700;color:${bColors[b]}">${dlbl}</div>
+            ${c.done?`<div style="font-family:var(--mono);font-size:11px;color:var(--ink4);margin-top:2px">${c.done} pcs</div>`:''}
+            ${c.style?`<div style="font-size:10px;color:var(--ink4);margin-top:2px">${c.style}</div>`:''}
+          </div>
+          <div style="font-size:12.5px;color:var(--ink2);line-height:1.55;border-left:3px solid ${bColors[b]};padding-left:12px">${c.comment.replace(/\n/g,'<br>')}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  });
+  document.getElementById('mprod-comments').innerHTML=commHtml||'<div class="empty">No comments recorded this month</div>';
+}
+
+// EOD
+function rEOD(){
+  const tk=today(),aw=DB.aw[tk]||{},as=DB.as[tk]||{},pd=DB.prod[tk]||{};
+  let wa=`<div class="rep-row"><span class="rep-k">Total Workers</span><span class="rep-v">${DB.workers.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.workers.filter(w=>aw[w.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Half Day</span><span class="rep-v" style="color:#b45309">${DB.workers.filter(w=>aw[w.id]==='H').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.workers.filter(w=>aw[w.id]==='A').length}</span></div>`;
+  SECS.forEach(s=>{const e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;wa+=`<div class="rep-row"><span class="rep-k">${s}</span><span class="rep-v">${p} / ${e.length}</span></div>`;});
+  document.getElementById('eod-wa').innerHTML=wa;
+  let sa=`<div class="rep-row"><span class="rep-k">Total Staff</span><span class="rep-v">${DB.staff.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.staff.filter(s=>as[s.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.staff.filter(s=>as[s.id]==='A').length}</span></div>`;
+  DB.staff.forEach(s=>{sa+=`<div class="rep-row"><span class="rep-k">${s.name}</span><span class="rep-v">${attBadge(as[s.id])}</span></div>`;});
+  document.getElementById('eod-sa').innerHTML=sa;
+  document.getElementById('eod-prods').innerHTML=BATCHES.map(b=>{const d=parseInt(pd[b+'_d'])||0,t=parseInt(pd[b+'_t'])||0,f=parseInt(pd[b+'_f'])||0,pct=t>0?Math.round(d/t*100):0;return`<div class="kc" style="--kc:${BC[b]}"><div class="kc-bar"></div><div class="kc-lbl">${BL[b]}</div><div class="kc-val">${d}</div><div class="kc-sub">of ${t||'—'} &middot; ${pct}%</div>${f?`<div style="font-size:11px;color:var(--red);margin-top:4px">${f} defects</div>`:''}<div class="prog-track" style="margin-top:8px"><div class="prog-fill" style="background:${BC[b]};width:${pct}%"></div></div></div>`;}).join('');
+  document.getElementById('op-notes').value=DB.notes;
+}
+function saveNotes(){DB.notes=document.getElementById('op-notes').value;persist();toast('Notes saved');}
+
+// WORKERS
+let _ewId=null;
+function renderW(){
+  const q=document.getElementById('w-q')?.value.toLowerCase()||'',sf=document.getElementById('w-sec')?.value||'',tf=document.getElementById('w-typ')?.value||'';
+  let list=DB.workers.filter(w=>(!q||w.name?.toLowerCase().includes(q)||String(w.id).toLowerCase().includes(q))&&(!sf||w.section===sf)&&(!tf||w.type===tf));
+  document.getElementById('w-lbl').textContent=list.length+' records';
+  document.getElementById('nb-w').textContent=DB.workers.length;
+  const tb=document.getElementById('w-tbl');
+  tb.innerHTML=list.length?list.map(w=>`<tr>
+    <td class="t-id">${w.id}</td><td class="t-name">${w.name}</td><td>${secBadge(w.section)}</td>
+    <td class="t-wage">Rs.${fmt(w.wage)}</td><td class="t-mono">${mAad(w.aadhaar)}</td><td class="t-mono">${mAcc(w.account)}</td>
+    <td>${typBadge(w.type)}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-xs" onclick="editW('${w.id}')">Edit</button>
+      <button class="btn btn-del btn-xs" onclick="delW('${w.id}')">Remove</button>
+    </td></tr>`).join(''):'<tr><td colspan="8"><div class="empty">No workers found</div></td></tr>';
+}
+function openWM(){_ewId=null;document.getElementById('wm-title').textContent='Add Worker';['id','nm','sec','rl','wg','tp','ad','ac','fn','gen','dob','mob','addr','doj','ec','pm','ifsc','esi','pf','vid','pan'].forEach(f=>{const e=document.getElementById('wf-'+f);if(e)e.value='';});document.getElementById('wf-tp').value='regular';document.getElementById('wm').classList.add('on');}
+function editW(id){const w=DB.workers.find(x=>x.id===id);if(!w)return;_ewId=id;document.getElementById('wm-title').textContent='Edit Worker';document.getElementById('wf-id').value=w.id;document.getElementById('wf-nm').value=w.name;document.getElementById('wf-sec').value=w.section;document.getElementById('wf-rl').value=w.role||'';document.getElementById('wf-wg').value=w.wage;document.getElementById('wf-tp').value=w.type||'regular';document.getElementById('wf-ad').value=w.aadhaar||'';document.getElementById('wf-ac').value=w.account||'';
+  // also load personal info if exists
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id);
+  if(infoKey){const r=DB.info[infoKey];['fn','gen','dob','mob','addr','doj','ec','pm','ifsc','esi','pf','vid','pan'].forEach(f=>{const e=document.getElementById('wf-'+f);if(e)e.value=r[f]||'';});}
+  document.getElementById('wm').classList.add('on');}
+function saveW(){
+  const id=document.getElementById('wf-id').value.trim(),nm=document.getElementById('wf-nm').value.trim(),sec=document.getElementById('wf-sec').value;
+  if(!id||!nm||!sec){toast('ID, Name and Section required','t-err');return;}
+  if(!_ewId&&DB.workers.find(w=>w.id===id)){toast('Employee ID already exists','t-err');return;}
+  const o={id,name:nm,section:sec,role:document.getElementById('wf-rl').value,wage:document.getElementById('wf-wg').value,type:document.getElementById('wf-tp').value,aadhaar:document.getElementById('wf-ad').value,account:document.getElementById('wf-ac').value};
+  if(_ewId){const i=DB.workers.findIndex(w=>w.id===_ewId);if(i>-1)DB.workers[i]=o;}else DB.workers.push(o);
+  // Save/update personal info record
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id)||('inf_'+id+'_worker');
+  const existingInfo=DB.info[infoKey]||{};
+  DB.info[infoKey]={...existingInfo,
+    id,nm,etype:'worker',
+    fn:document.getElementById('wf-fn').value.trim(),
+    gen:document.getElementById('wf-gen').value,
+    dob:document.getElementById('wf-dob').value,
+    mob:document.getElementById('wf-mob').value.trim(),
+    addr:document.getElementById('wf-addr').value.trim(),
+    doj:document.getElementById('wf-doj').value,
+    ec:document.getElementById('wf-ec').value,
+    wage:document.getElementById('wf-wg').value,
+    pm:document.getElementById('wf-pm').value,
+    bank:document.getElementById('wf-ac').value.trim(),
+    ifsc:document.getElementById('wf-ifsc').value.trim(),
+    esi:document.getElementById('wf-esi').value.trim(),
+    pf:document.getElementById('wf-pf').value.trim(),
+    vid:document.getElementById('wf-vid').value.trim(),
+    pan:document.getElementById('wf-pan').value.trim(),
+    aad:document.getElementById('wf-ad').value.trim()
+  };
+  persist();closeOv('wm');renderW();toast('Worker saved');
+}
+function delW(id){
+  const w=DB.workers.find(x=>x.id===id);
+  if(!w){toast('Worker not found','t-err');return;}
+  if(!confirm('Move '+w.name+' (ID: '+w.id+') to Left Workers archive?\n\nAll their data, attendance, wages and personal info will be preserved and can be downloaded anytime.'))return;
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id)||null;
+  const personalInfo=infoKey?DB.info[infoKey]:null;
+  const attRecords={};
+  Object.entries(DB.aw).forEach(function([date,rec]){if(rec[id]!==undefined)attRecords[date]=rec[id];});
+  const wagesByMonth={};
+  Object.entries(attRecords).forEach(function([date,st]){
+    const ym=date.slice(0,7);
+    if(!wagesByMonth[ym])wagesByMonth[ym]={days:0,half:0};
+    if(st==='P')wagesByMonth[ym].days++;
+    else if(st==='H')wagesByMonth[ym].half++;
+  });
+  const wagesCalc=Object.entries(wagesByMonth).map(function([ym,v]){
+    const d=v.days+(v.half*0.5),total=d*parseFloat(w.wage||0);
+    return{month:ym,daysPresent:d,totalPaid:total};
+  });
+  const archived={type:'worker',worker:Object.assign({},w),personalInfo:personalInfo,attendance:attRecords,wagesHistory:wagesCalc,dateLeft:new Date().toISOString().split('T')[0],archivedAt:new Date().toISOString()};
+  DB.left.push(archived);
+  DB.workers=DB.workers.filter(function(x){return x.id!==id;});
+  persist();
+  renderW();
+  var nb=document.getElementById('nb-left');if(nb)nb.textContent=DB.left.length;
+  toast(w.name+' moved to Left Workers archive','t-info');
+}
+
+// STAFF
+let _esId=null;
+function renderS(){
+  const q=document.getElementById('s-q')?.value.toLowerCase()||'';
+  let list=DB.staff.filter(s=>!q||s.name?.toLowerCase().includes(q)||String(s.id).toLowerCase().includes(q)||s.role?.toLowerCase().includes(q));
+  document.getElementById('s-lbl').textContent=list.length+' records';
+  document.getElementById('nb-s').textContent=DB.staff.length;
+  const tb=document.getElementById('s-tbl');
+  tb.innerHTML=list.length?list.map(s=>`<tr>
+    <td class="t-id">${s.id}</td><td class="t-name">${s.name}</td>
+    <td><span class="bd bd-violet">${s.role}</span></td>
+    <td class="t-sal">Rs.${fmt(s.salary)}</td>
+    <td class="t-mono">${mAad(s.aadhaar)}</td><td class="t-mono">${mAcc(s.account)}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-xs" onclick="editS('${s.id}')">Edit</button>
+      <button class="btn btn-del btn-xs" onclick="delS('${s.id}')">Remove</button>
+    </td></tr>`).join(''):'<tr><td colspan="7"><div class="empty">No staff found</div></td></tr>';
+}
+function openSM(){_esId=null;document.getElementById('sm-title').textContent='Add Staff Member';['id','nm','rl','sl','ad','ac','fn','dob','mob','addr','doj','esi','pf'].forEach(f=>{const e=document.getElementById('sf-'+f);if(e)e.value='';});document.getElementById('sm').classList.add('on');}
+function editS(id){const s=DB.staff.find(x=>x.id===id);if(!s)return;_esId=id;document.getElementById('sm-title').textContent='Edit Staff Member';document.getElementById('sf-id').value=s.id;document.getElementById('sf-nm').value=s.name;document.getElementById('sf-rl').value=s.role;document.getElementById('sf-sl').value=s.salary;document.getElementById('sf-ad').value=s.aadhaar||'';document.getElementById('sf-ac').value=s.account||'';
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id);
+  if(infoKey){const r=DB.info[infoKey];['fn','dob','mob','addr','doj','ec','esi','pf'].forEach(f=>{const e=document.getElementById('sf-'+f);if(e)e.value=r[f]||'';});const sg=document.getElementById('sf-gen');if(sg)sg.value=r.gen||'';}
+  document.getElementById('sm').classList.add('on');}
+function saveS(){const id=document.getElementById('sf-id').value.trim(),nm=document.getElementById('sf-nm').value.trim(),rl=document.getElementById('sf-rl').value.trim();if(!id||!nm||!rl){toast('ID, Name and Role required','t-err');return;}if(!_esId&&DB.staff.find(s=>s.id===id)){toast('Staff ID already exists','t-err');return;}const o={id,name:nm,role:rl,salary:document.getElementById('sf-sl').value,aadhaar:document.getElementById('sf-ad').value,account:document.getElementById('sf-ac').value};if(_esId){const i=DB.staff.findIndex(s=>s.id===_esId);if(i>-1)DB.staff[i]=o;}else DB.staff.push(o);
+  // Save personal info
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id)||('inf_'+id+'_staff');
+  const existingInfo=DB.info[infoKey]||{};
+  DB.info[infoKey]={...existingInfo,id,nm,etype:'staff',
+    fn:document.getElementById('sf-fn').value.trim(),
+    gen:(document.getElementById('sf-gen')?.value||''),
+    dob:document.getElementById('sf-dob').value,
+    mob:document.getElementById('sf-mob').value.trim(),
+    addr:document.getElementById('sf-addr').value.trim(),
+    doj:document.getElementById('sf-doj').value,
+    ec:document.getElementById('sf-ec')?.value||'',
+    wage:document.getElementById('sf-sl').value,
+    bank:document.getElementById('sf-ac').value.trim(),
+    esi:document.getElementById('sf-esi').value.trim(),
+    pf:document.getElementById('sf-pf').value.trim(),
+    aad:document.getElementById('sf-ad').value.trim(),
+    dept:'Staff / Management',desig:rl
+  };
+  persist();closeOv('sm');renderS();toast('Staff member saved');}
+function delS(id){
+  const s=DB.staff.find(x=>x.id===id);
+  if(!s){toast('Staff not found','t-err');return;}
+  if(!confirm('Move '+s.name+' (ID: '+s.id+') to Left Workers archive?\n\nAll their data will be preserved and can be downloaded anytime.'))return;
+  const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id)||null;
+  const personalInfo=infoKey?DB.info[infoKey]:null;
+  const attRecords={};
+  Object.entries(DB.as).forEach(function([date,rec]){if(rec[id]!==undefined)attRecords[date]=rec[id];});
+  const wagesByMonth={};
+  Object.entries(attRecords).forEach(function([date,st]){
+    const ym=date.slice(0,7);
+    if(!wagesByMonth[ym])wagesByMonth[ym]=0;
+    if(st==='P')wagesByMonth[ym]++;
+  });
+  const wagesCalc=Object.entries(wagesByMonth).map(function([ym,days]){
+    return{month:ym,daysPresent:days,totalPaid:parseFloat(s.salary||0)};
+  });
+  const archived={type:'staff',worker:Object.assign({},s),personalInfo:personalInfo,attendance:attRecords,wagesHistory:wagesCalc,dateLeft:new Date().toISOString().split('T')[0],archivedAt:new Date().toISOString()};
+  DB.left.push(archived);
+  DB.staff=DB.staff.filter(function(x){return x.id!==id;});
+  persist();
+  renderS();
+  var nb=document.getElementById('nb-left');if(nb)nb.textContent=DB.left.length;
+  toast(s.name+' moved to Left Workers archive','t-info');
+}
+
+// PERSONNEL INFO
+const INFO_FIELDS=['id','etype','nm','fn','gen','dob','ms','mob','addr','caddr','aad','vid','pan','dept','desig','doj','ec','wage','pm','bank','ifsc','esi','pf','ecn','ecr','ecp'];
+let _eiId=null;
+function renderInfo(){
+  const q=(document.getElementById('info-q')?.value||'').toLowerCase();
+  const dept=document.getElementById('info-dept')?.value||'';
+  const typ=document.getElementById('info-type')?.value||'';
+  // Build merged list: all workers + staff, with their info record if it exists
+  const allPeople=[];
+  DB.workers.forEach(w=>{
+    const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===w.id)||null;
+    const info=infoKey?DB.info[infoKey]:{};
+    allPeople.push({_key:infoKey,_wid:w.id,_type:'worker',id:w.id,nm:w.name,dept:info.dept||'',desig:info.desig||w.role||'',doj:info.doj||'',ec:info.ec||'',esi:info.esi||'',pf:info.pf||'',etype:'worker',...info});
+  });
+  DB.staff.forEach(s=>{
+    const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===s.id)||null;
+    const info=infoKey?DB.info[infoKey]:{};
+    allPeople.push({_key:infoKey,_wid:s.id,_type:'staff',id:s.id,nm:s.name,dept:info.dept||'Staff / Management',desig:info.desig||s.role||'',doj:info.doj||'',ec:info.ec||'',esi:info.esi||'',pf:info.pf||'',etype:'staff',...info});
+  });
+  let recs=allPeople;
+  if(q)recs=recs.filter(r=>(r.nm||'').toLowerCase().includes(q)||(r.id||'').toLowerCase().includes(q)||(r.aad||'').toLowerCase().includes(q));
+  if(dept)recs=recs.filter(r=>r.dept===dept||(dept==='Staff'&&r.etype==='staff'));
+  if(typ)recs=recs.filter(r=>r.etype===typ);
+  document.getElementById('info-lbl').textContent=recs.length+' records';
+  const tb=document.getElementById('info-tbl');
+  if(!recs.length){tb.innerHTML='<tr><td colspan="9"><div class="empty">No personnel records found.</div></td></tr>';return;}
+  tb.innerHTML=recs.map(r=>`<tr>
+    <td class="t-id">${r.id||'—'}</td><td class="t-name">${r.nm||'—'}</td>
+    <td>${secBadge(r.dept)}</td>
+    <td style="font-size:12px;color:var(--ink3)">${r.desig||'—'}</td>
+    <td class="t-mono">${r.doj||'—'}</td>
+    <td><span class="bd ${r.ec==='Permanent'?'bd-green':r.ec==='Contract'?'bd-amber':'bd-gray'}">${r.ec||'—'}</span></td>
+    <td class="t-mono">${r.esi||'—'}</td>
+    <td class="t-mono">${r.pf||'—'}</td>
+    <td style="white-space:nowrap">
+      ${r._key?`<button class="btn btn-info btn-xs" onclick="viewInfo('${r._key}')">View</button>`:''}
+      <button class="btn btn-ghost btn-xs" onclick="editInfoFromWorker('${r._wid}','${r._type}')">Edit</button>
+    </td></tr>`).join('');
+}
+function editInfoFromWorker(wid, type){
+  // Open the worker/staff modal for editing so name syncs
+  if(type==='worker') editW(wid);
+  else editS(wid);
+}
+function openInfoM(preId,preType){
+  _eiId=null;
+  document.getElementById('im-title').textContent='Add Personnel Record';
+  INFO_FIELDS.forEach(f=>{const e=document.getElementById('if-'+f);if(e)e.value='';});
+  if(preId)document.getElementById('if-id').value=preId;
+  if(preType)document.getElementById('if-etype').value=preType;
+  document.getElementById('info-modal').classList.add('on');
+}
+function editInfo(key){
+  const r=DB.info[key];if(!r)return;
+  _eiId=key;
+  document.getElementById('im-title').textContent='Edit Personnel Record';
+  INFO_FIELDS.forEach(f=>{const e=document.getElementById('if-'+f);if(e)e.value=r[f]||'';});
+  document.getElementById('info-modal').classList.add('on');
+}
+function saveInfo(){
+  const nm=document.getElementById('if-nm').value.trim(),id=document.getElementById('if-id').value.trim();
+  if(!nm){toast('Full Name is required','t-err');return;}
+  const rec={};
+  INFO_FIELDS.forEach(f=>{const e=document.getElementById('if-'+f);if(e)rec[f]=e.value.trim();});
+  const key=_eiId||('inf_'+(id||nm.replace(/\s+/g,'_'))+'_'+Date.now());
+  DB.info[key]=rec;persist();closeOv('info-modal');renderInfo();toast('Personnel record saved');
+}
+function delInfo(key){
+  const r=DB.info[key];
+  if(!confirm(`Delete personnel record for ${r?.nm||'this person'}?`))return;
+  delete DB.info[key];persist();renderInfo();toast('Record deleted','t-info');
+}
+function viewInfo(key){
+  const r=DB.info[key];if(!r)return;
+  document.getElementById('panel-name').textContent=r.nm||'—';
+  document.getElementById('panel-sub').textContent=(r.id?'ID: '+r.id:'')+(r.dept?' &middot; '+r.dept:'')+(r.desig?' &middot; '+r.desig:'');
+  document.getElementById('panel-edit-btn').onclick=()=>{closePanel();editInfo(key);};
+  const field=(lbl,val,mono=false)=>`<div class="info-field"><label>${lbl}</label><span class="${mono?'mono':''}">${val||'—'}</span></div>`;
+  const full=(lbl,val)=>`<div class="info-field full"><label>${lbl}</label><span>${val||'—'}</span></div>`;
+  document.getElementById('panel-body').innerHTML=`
+    <div class="info-section">
+      <div class="info-section-title">Personal Details</div>
+      <div class="info-grid">
+        ${field('Full Name (Aadhaar)',r.nm)}
+        ${field('Father / Husband Name',r.fn)}
+        ${field('Gender',r.gen)}
+        ${field('Date of Birth',r.dob)}
+        ${field('Marital Status',r.ms)}
+        ${field('Mobile Number',r.mob,true)}
+        ${full('Permanent Address',r.addr)}
+        ${full('Current Address',r.caddr||r.addr)}
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">Identity Documents</div>
+      <div class="info-grid">
+        ${field('Aadhaar Number',r.aad?'XXXX XXXX '+r.aad.slice(-4):'')}
+        ${field('Voter ID',r.vid)}
+        ${field('PAN Card',r.pan)}
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">Employment Details</div>
+      <div class="info-grid">
+        ${field('Employee ID',r.id)}
+        ${field('Type',r.etype==='staff'?'Staff':'Worker')}
+        ${field('Department',r.dept)}
+        ${field('Designation',r.desig)}
+        ${field('Date of Joining',r.doj)}
+        ${field('Employment Category',r.ec)}
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">Wage & Payment</div>
+      <div class="info-grid">
+        ${field('Wage / Salary',r.wage?'Rs. '+Number(r.wage).toLocaleString('en-IN'):'')}
+        ${field('Payment Mode',r.pm)}
+        ${field('Bank Account No.',r.bank,true)}
+        ${field('IFSC Code',r.ifsc,true)}
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">ESI &amp; PF</div>
+      <div class="info-grid">
+        ${field('ESI Number',r.esi,true)}
+        ${field('PF Number',r.pf,true)}
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-title">Emergency Contact</div>
+      <div class="info-grid">
+        ${field('Contact Person',r.ecn)}
+        ${field('Relationship',r.ecr)}
+        ${field('Phone Number',r.ecp,true)}
+      </div>
+    </div>`;
+  document.getElementById('info-overlay').classList.add('on');
+  document.getElementById('info-panel').classList.add('on');
+}
+function closePanel(){document.getElementById('info-panel').classList.remove('on');document.getElementById('info-overlay').classList.remove('on');}
+
+// WAGES
+let _wt='w';
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function wTab(t,btn){_wt=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('wg-w').style.display=t==='w'?'block':'none';document.getElementById('wg-s').style.display=t==='s'?'block':'none';document.getElementById('wg-d').style.display=t==='d'?'block':'none';renderWg();}
+function renderWg(){
+  if(_wt==='d'){renderDateWise();return;}
+  if(_wt==='w'){
+    const mon=document.getElementById('wg-mon')?.value||'February';
+    const yr=document.getElementById('wg-yr')?.value||'2025';
+    const monIdx=String(MONTHS.indexOf(mon)+1).padStart(2,'0');
+    const prefix=yr+'-'+monIdx;
+    const wd={},wh={};
+    DB.workers.forEach(w=>{wd[w.id]=0;wh[w.id]=0;});
+    Object.entries(DB.aw).forEach(function([date,rec]){
+      if(!date.startsWith(prefix))return;
+      Object.entries(rec).forEach(function([id,st]){
+        if(wd[id]!==undefined){if(st==='P')wd[id]++;else if(st==='H')wh[id]++;}
+      });
+    });
+    let tot=0;
+    const lbl=document.getElementById('wg-mon-lbl');if(lbl)lbl.textContent=mon+' '+yr;
+    document.getElementById('wg-w-tbl').innerHTML=DB.workers.map(function(w){
+      const d=wd[w.id]||0,h=wh[w.id]||0,effective=d+(h*0.5),t=parseFloat(w.wage||0)*effective;tot+=t;
+      return'<tr><td class="t-id">'+w.id+'</td><td class="t-name">'+w.name+'</td><td>'+secBadge(w.section)+'</td><td style="color:var(--ink3)">Rs.'+fmt(w.wage)+'</td><td style="font-family:var(--mono);font-weight:600;color:var(--blue)">'+d+'</td><td style="font-family:var(--mono);font-weight:600;color:#b45309">'+h+'</td><td class="t-amt">Rs.'+fmt(t)+'</td><td class="t-mono">'+mAcc(w.account)+'</td></tr>';
+    }).join('')+'<tr class="t-tot"><td colspan="6" style="color:var(--ink3)">Grand Total — All Workers</td><td class="t-amt">Rs.'+fmt(tot)+'</td><td></td></tr>';
+    const reg=DB.workers.filter(w=>w.type==='regular').length,esi=DB.workers.filter(w=>w.type==='esi').length,na=DB.workers.filter(w=>w.type==='noacc').length;
+    document.getElementById('wg-kpi').innerHTML='<div class="kc" style="--kc:var(--amber)"><div class="kc-bar"></div><div class="kc-lbl">Total Payable</div><div class="kc-val" style="font-size:20px">Rs.'+fmt(tot)+'</div><div class="kc-sub">'+mon+' '+yr+'</div></div><div class="kc" style="--kc:var(--blue)"><div class="kc-bar"></div><div class="kc-lbl">Regular Workers</div><div class="kc-val">'+reg+'</div><div class="kc-sub">'+esi+' ESI/PF &middot; '+na+' No A/C</div></div><div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Total Workers</div><div class="kc-val">'+DB.workers.length+'</div></div>';
+  } else {
+    const mon=document.getElementById('wg-mon-s')?.value||'February';
+    const yr=document.getElementById('wg-yr-s')?.value||'2025';
+    const monIdx=String(MONTHS.indexOf(mon)+1).padStart(2,'0');
+    const prefix=yr+'-'+monIdx;
+    const sd={};
+    DB.staff.forEach(s=>{sd[s.id]=0;});
+    Object.entries(DB.as).forEach(function([date,rec]){
+      if(!date.startsWith(prefix))return;
+      Object.entries(rec).forEach(function([id,st]){if(sd[id]!==undefined&&st==='P')sd[id]++;});
+    });
+    const lbl=document.getElementById('wg-mon-s-lbl');if(lbl)lbl.textContent=mon+' '+yr;
+    let tot=0;
+    document.getElementById('wg-s-tbl').innerHTML=DB.staff.map(function(s){
+      const d=sd[s.id]||0,sal=parseFloat(s.salary||0);tot+=sal;
+      return'<tr><td class="t-id">'+s.id+'</td><td class="t-name">'+s.name+'</td><td><span class="bd bd-violet">'+s.role+'</span></td><td class="t-sal">Rs.'+fmt(s.salary)+'</td><td style="font-family:var(--mono);font-weight:600;color:var(--blue)">'+d+'</td><td class="t-amt">Rs.'+fmt(sal)+'</td><td class="t-mono">'+(s.account||'—')+'</td></tr>';
+    }).join('')+'<tr class="t-tot"><td colspan="5" style="color:var(--ink3)">Grand Total — All Staff</td><td class="t-amt">Rs.'+fmt(tot)+'</td><td></td></tr>';
+  }
+}
+function renderDateWise(){
+  const from=document.getElementById('wg-date-from')?.value;
+  const to=document.getElementById('wg-date-to')?.value;
+  const cont=document.getElementById('wg-d-content');
+  if(!from&&!to){cont.innerHTML='<div class="empty" style="margin-top:40px">Select a date range and click Generate Report</div>';return;}
+  const fromD=from||to,toD=to||from;
+  if(fromD>toD){toast('From date must be before To date','t-err');return;}
+  // Collect all dates in range
+  const dates=[];
+  let cur=new Date(fromD);const end=new Date(toD);
+  while(cur<=end){dates.push(cur.toISOString().split('T')[0]);cur.setDate(cur.getDate()+1);}
+  // Build per-day summary
+  let grandTotal=0,grandWorkers=0,grandHalf=0;
+  const dayRows=dates.map(function(date){
+    const aw=DB.aw[date]||{},as=DB.as[date]||{};
+    const wP=DB.workers.filter(w=>aw[w.id]==='P').length;
+    const wH=DB.workers.filter(w=>aw[w.id]==='H').length;
+    const wA=DB.workers.filter(w=>aw[w.id]==='A').length;
+    const sP=DB.staff.filter(s=>as[s.id]==='P').length;
+    // Daily wage cost
+    let dayCost=0;
+    DB.workers.forEach(function(w){
+      if(aw[w.id]==='P')dayCost+=parseFloat(w.wage||0);
+      else if(aw[w.id]==='H')dayCost+=parseFloat(w.wage||0)*0.5;
+    });
+    grandTotal+=dayCost;grandWorkers+=wP;grandHalf+=wH;
+    const hasData=Object.keys(aw).length>0||Object.keys(as).length>0;
+    const dayName=new Date(date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short'});
+    return'<tr style="'+(hasData?'':'opacity:0.45')+'">'
+      +'<td class="t-mono" style="font-weight:600">'+date+'</td>'
+      +'<td style="color:#64748b;font-size:11px">'+dayName+'</td>'
+      +'<td style="font-family:var(--mono);font-weight:700;color:var(--green)">'+wP+'</td>'
+      +'<td style="font-family:var(--mono);color:#b45309">'+wH+'</td>'
+      +'<td style="font-family:var(--mono);color:var(--red)">'+wA+'</td>'
+      +'<td style="font-family:var(--mono);color:var(--violet);font-weight:600">'+sP+'</td>'
+      +'<td class="t-amt" style="font-size:13px">Rs.'+fmt(dayCost)+'</td>'
+      +'<td style="white-space:nowrap"><button class="btn btn-info btn-xs" onclick="showDayDetail(\''+date+'\')">Detail</button></td>'
+      +'</tr>';
+  }).join('');
+  const totalDays=dates.length;
+  const avgCost=totalDays>0?(grandTotal/totalDays):0;
+  cont.innerHTML='<div class="g g3" style="margin-bottom:14px">'
+    +'<div class="kc" style="--kc:var(--amber)"><div class="kc-bar"></div><div class="kc-lbl">Total Wage Cost</div><div class="kc-val" style="font-size:20px">Rs.'+fmt(grandTotal)+'</div><div class="kc-sub">'+totalDays+' days selected</div></div>'
+    +'<div class="kc" style="--kc:var(--blue)"><div class="kc-bar"></div><div class="kc-lbl">Avg Daily Cost</div><div class="kc-val" style="font-size:20px">Rs.'+fmt(Math.round(avgCost))+'</div><div class="kc-sub">per working day</div></div>'
+    +'<div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Total Worker-Days</div><div class="kc-val">'+grandWorkers+'</div><div class="kc-sub">'+grandHalf+' half-days</div></div>'
+    +'</div>'
+    +'<div class="dc"><div class="dc-hd"><h3>Date-wise Cost Report <span class="dc-cnt">'+fromD+' to '+toD+'</span></h3></div>'
+    +'<table><thead><tr><th>Date</th><th>Day</th><th>Workers Present</th><th>Half Day</th><th>Absent</th><th>Staff Present</th><th>Day\'s Wage Cost</th><th>Detail</th></tr></thead>'
+    +'<tbody>'+dayRows+'</tbody>'
+    +'<tfoot><tr class="t-tot"><td colspan="6">Grand Total ('+totalDays+' days)</td><td class="t-amt">Rs.'+fmt(grandTotal)+'</td><td></td></tr></tfoot>'
+    +'</table></div>';
+}
+function showDayDetail(date){
+  const aw=DB.aw[date]||{},as=DB.as[date]||{};
+  const dayName=new Date(date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  let wCost=0;
+  const wRows=DB.workers.map(function(w){
+    const st=aw[w.id];if(!st||st==='A')return'';
+    const pay=st==='P'?parseFloat(w.wage||0):parseFloat(w.wage||0)*0.5;
+    wCost+=pay;
+    return'<tr><td class="t-id">'+w.id+'</td><td class="t-name">'+w.name+'</td><td>'+secBadge(w.section)+'</td>'
+      +'<td><span class="bd '+(st==='P'?'bd-green':'bd-amber')+'">'+st+'</span></td>'
+      +'<td class="t-amt">Rs.'+fmt(pay)+'</td></tr>';
+  }).join('');
+  const sRows=DB.staff.map(function(s){
+    const st=as[s.id];if(!st||st==='A')return'';
+    return'<tr><td class="t-id">'+s.id+'</td><td class="t-name">'+s.name+'</td><td><span class="bd bd-violet">'+s.role+'</span></td>'
+      +'<td><span class="bd bd-green">'+st+'</span></td><td class="t-sal">Monthly</td></tr>';
+  }).join('');
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Day Report — '+date+'</title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;font-size:13px;color:#1e293b;padding:28px}@media print{button{display:none!important}}.header{padding-bottom:16px;border-bottom:2px solid #1d4ed8;margin-bottom:20px}.co{font-size:18px;font-weight:800;color:#1d4ed8}.dt{font-size:14px;font-weight:700;margin-top:6px}table{width:100%;border-collapse:collapse;margin-bottom:20px}th{padding:8px 12px;background:#f8fafc;font-size:10.5px;font-weight:600;color:#64748b;text-transform:uppercase;border-bottom:2px solid #e2e8f0;text-align:left}td{padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:12.5px}.t-id{font-family:monospace;color:#94a3b8}.t-name{font-weight:600}.t-amt{font-family:monospace;font-weight:700;color:#92400e}.t-sal{font-family:monospace;color:#5b21b6}.tot{background:#f8fafc;font-weight:700;border-top:2px solid #1d4ed8}.kpi{display:flex;gap:12px;margin-bottom:20px}.kpi-box{flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:14px;border-top:3px solid var(--c,#1d4ed8)}.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#94a3b8}.kpi-val{font-size:22px;font-weight:800;margin-top:4px;color:var(--c,#1d4ed8)}.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid #e2e8f0}.bd{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}.bd-green{background:#f0fdf4;color:#15803d;border:1px solid #86efac}.bd-amber{background:#fffbeb;color:#92400e;border:1px solid #fcd34d}.bd-violet{background:#f5f3ff;color:#5b21b6;border:1px solid #c4b5fd}.print-btn{margin-top:16px;padding:9px 20px;background:#1d4ed8;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer}</style></head>'
+    +'<body><div class="header"><div class="co">Paripoorna Exports Garments</div><div class="dt">Daily Report — '+dayName+'</div></div>'
+    +'<div class="kpi">'
+    +'<div class="kpi-box" style="--c:#15803d"><div class="kpi-lbl">Workers Present</div><div class="kpi-val">'+Object.values(aw).filter(s=>s==='P').length+'</div></div>'
+    +'<div class="kpi-box" style="--c:#b45309"><div class="kpi-lbl">Half Day</div><div class="kpi-val">'+Object.values(aw).filter(s=>s==='H').length+'</div></div>'
+    +'<div class="kpi-box" style="--c:#991b1b"><div class="kpi-lbl">Absent</div><div class="kpi-val">'+Object.values(aw).filter(s=>s==='A').length+'</div></div>'
+    +'<div class="kpi-box" style="--c:#92400e"><div class="kpi-lbl">Day\'s Total Cost</div><div class="kpi-val">Rs.'+fmt(wCost)+'</div></div>'
+    +'</div>'
+    +(wRows?'<div class="sec">Workers — Present / Half Day</div><table><thead><tr><th>Emp ID</th><th>Name</th><th>Section</th><th>Status</th><th>Amount</th></tr></thead><tbody>'+wRows+'<tr class="tot"><td colspan="4">Total Worker Cost</td><td class="t-amt">Rs.'+fmt(wCost)+'</td></tr></tbody></table>':'<div style="color:#94a3b8;padding:16px 0">No worker attendance recorded for this date.</div>')
+    +(sRows?'<div class="sec">Staff — Present</div><table><thead><tr><th>Staff ID</th><th>Name</th><th>Role</th><th>Status</th><th>Salary</th></tr></thead><tbody>'+sRows+'</tbody></table>':'')
+    +'<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>'
+    +'</body></html>';
+  const win=window.open('','_blank','width=780,height=720,scrollbars=yes');
+  win.document.write(html);win.document.close();
+}
+function printWages(){window.print();}
+
+
+// MODAL
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+
+// LEFT WORKERS
+let _leftTab='w';
+function leftTab(t,btn){_leftTab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('left-w').style.display=t==='w'?'block':'none';document.getElementById('left-s').style.display=t==='s'?'block':'none';renderLeft();}
+function renderLeft(){
+  const workers=DB.left.filter(l=>l.type==='worker');
+  const staff=DB.left.filter(l=>l.type==='staff');
+  if(_leftTab==='w'){
+    const q=(document.getElementById('lw-q')?.value||'').toLowerCase();
+    const list=workers.filter(l=>!q||l.worker.name?.toLowerCase().includes(q)||String(l.worker.id).toLowerCase().includes(q));
+    document.getElementById('lw-lbl').textContent=list.length+' records';
+    document.getElementById('lw-tbl').innerHTML=list.length?list.map((l,i)=>{
+      const idx=DB.left.indexOf(l);
+      const totalMonths=l.wagesHistory?.length||0;
+      const totalPaid=l.wagesHistory?.reduce((s,m)=>s+(m.totalPaid||0),0)||0;
+      return`<tr>
+        <td class="t-id">${l.worker.id}</td><td class="t-name">${l.worker.name}</td>
+        <td>${secBadge(l.worker.section)}</td><td class="t-wage">Rs.${fmt(l.worker.wage)}</td>
+        <td class="t-mono">${l.dateLeft}</td>
+        <td class="t-mono">${totalMonths} months &middot; Rs.${fmt(totalPaid)} total</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-info btn-xs" onclick="viewLeft(${idx})">View</button>
+          <button class="btn btn-suc btn-xs" onclick="downloadLeft(${idx})">Download</button>
+        </td></tr>`;
+    }).join(''):'<tr><td colspan="7"><div class="empty">No left workers yet</div></td></tr>';
+  } else {
+    const q=(document.getElementById('ls-q')?.value||'').toLowerCase();
+    const list=staff.filter(l=>!q||l.worker.name?.toLowerCase().includes(q)||String(l.worker.id).toLowerCase().includes(q));
+    document.getElementById('ls-lbl').textContent=list.length+' records';
+    document.getElementById('ls-tbl').innerHTML=list.length?list.map((l,i)=>{
+      const idx=DB.left.indexOf(l);
+      const totalMonths=l.wagesHistory?.length||0;
+      const totalPaid=l.wagesHistory?.reduce((s,m)=>s+(m.totalPaid||0),0)||0;
+      return`<tr>
+        <td class="t-id">${l.worker.id}</td><td class="t-name">${l.worker.name}</td>
+        <td><span class="bd bd-violet">${l.worker.role}</span></td><td class="t-sal">Rs.${fmt(l.worker.salary)}</td>
+        <td class="t-mono">${l.dateLeft}</td>
+        <td class="t-mono">${totalMonths} months &middot; Rs.${fmt(totalPaid)} total</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-info btn-xs" onclick="viewLeft(${idx})">View</button>
+          <button class="btn btn-suc btn-xs" onclick="downloadLeft(${idx})">Download</button>
+        </td></tr>`;
+    }).join(''):'<tr><td colspan="7"><div class="empty">No left staff yet</div></td></tr>';
+  }
+}
+function viewLeft(idx){
+  const l=DB.left[idx];if(!l)return;
+  const w=l.worker,p=l.personalInfo||{};
+  const attEntries=Object.entries(l.attendance||{}).sort((a,b)=>a[0].localeCompare(b[0]));
+  const wageRows=l.wagesHistory?.map(m=>`<tr><td>${m.month}</td><td>${m.daysPresent}</td><td>Rs.${fmt(m.totalPaid)}</td></tr>`).join('')||'';
+  const totalPaid=l.wagesHistory?.reduce((s,m)=>s+(m.totalPaid||0),0)||0;
+  const content=`
+<div style="font-family:Inter,sans-serif;font-size:13px;color:#1e293b;padding:10px">
+<h2 style="font-size:18px;font-weight:800;margin-bottom:4px">${w.name}</h2>
+<p style="color:#94a3b8;margin-bottom:20px">ID: ${w.id} &middot; Left: ${l.dateLeft} &middot; ${l.type==='worker'?'Worker':'Staff'}</p>
+<h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Employment Details</h3>
+<table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+<tr><td style="padding:5px 0;color:#64748b;width:40%">Section</td><td>${w.section||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Daily Wage/Salary</td><td>Rs.${fmt(w.wage||w.salary)}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Type</td><td>${w.type||w.role||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Aadhaar</td><td>${w.aadhaar||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Account</td><td>${w.account||'—'}</td></tr>
+</table>
+${p.nm?`<h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Personal Info</h3>
+<table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+<tr><td style="padding:5px 0;color:#64748b;width:40%">Father/Husband</td><td>${p.fn||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Mobile</td><td>${p.mob||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Date of Joining</td><td>${p.doj||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">Address</td><td>${p.addr||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">ESI No.</td><td>${p.esi||'—'}</td></tr>
+<tr><td style="padding:5px 0;color:#64748b">PF No.</td><td>${p.pf||'—'}</td></tr>
+</table>`:''}
+<h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Wages History</h3>
+${wageRows?`<table style="width:100%;border-collapse:collapse;margin-bottom:16px"><thead><tr style="background:#f1f5f9"><th style="padding:7px;text-align:left;font-size:11px">Month</th><th style="padding:7px;text-align:left;font-size:11px">Days Present</th><th style="padding:7px;text-align:left;font-size:11px">Amount</th></tr></thead><tbody>${wageRows}</tbody><tfoot><tr style="font-weight:700"><td colspan="2" style="padding:7px">Total Paid</td><td style="padding:7px">Rs.${fmt(totalPaid)}</td></tr></tfoot></table>`:'<p style="color:#94a3b8">No wage records</p>'}
+<h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Attendance Log (${attEntries.length} days)</h3>
+${attEntries.length?`<div style="display:flex;flex-wrap:wrap;gap:4px">${attEntries.map(([d,s])=>`<span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;background:${s==='P'?'#f0fdf4':s==='A'?'#fef2f2':'#fffbeb'};color:${s==='P'?'#15803d':s==='A'?'#991b1b':'#92400e'}">${d}: ${s}</span>`).join('')}</div>`:'<p style="color:#94a3b8">No attendance records</p>'}
+</div>`;
+  const win=window.open('','_blank','width=700,height=700,scrollbars=yes');
+  win.document.write(`<!DOCTYPE html><html><head><title>${w.name} — Archive</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head><body style="margin:0;padding:20px;font-family:Inter,sans-serif">${content}<br><button onclick="window.print()" style="padding:8px 18px;background:#1d4ed8;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Print / Save as PDF</button></body></html>`);
+  win.document.close();
+}
+function downloadLeft(idx){
+  const l=DB.left[idx];if(!l)return;
+  const w=l.worker,p=l.personalInfo||{};
+  const totalPaid=l.wagesHistory?.reduce((s,m)=>s+(m.totalPaid||0),0)||0;
+  // Calculate outstanding: last month may have partial days not fully paid
+  const wageRows=(l.wagesHistory||[]).map(m=>`
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">${m.month}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center">${m.daysPresent}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:right;font-family:monospace">Rs. ${Number(m.totalPaid).toLocaleString('en-IN')}</td>
+    </tr>`).join('');
+  const attSummary={P:0,A:0,H:0};
+  Object.values(l.attendance||{}).forEach(s=>{if(s==='P')attSummary.P++;else if(s==='A')attSummary.A++;else if(s==='H')attSummary.H++;});
+  const html=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Full &amp; Final Settlement — ${w.name}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,sans-serif;font-size:13px;color:#1e293b;background:#fff;padding:32px}
+  @media print{body{padding:16px}button{display:none!important}}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:20px;border-bottom:2px solid #1d4ed8;margin-bottom:24px}
+  .co-name{font-size:20px;font-weight:800;color:#1d4ed8;letter-spacing:-.3px}
+  .co-sub{font-size:11px;color:#64748b;margin-top:3px}
+  .doc-title{text-align:right}
+  .doc-title h1{font-size:16px;font-weight:800;color:#0f172a}
+  .doc-title p{font-size:11px;color:#94a3b8;margin-top:3px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;margin-top:6px}
+  .section{margin-bottom:22px}
+  .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e2e8f0}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .field label{font-size:10.5px;font-weight:600;color:#94a3b8;display:block;margin-bottom:2px}
+  .field span{font-size:13px;color:#1e293b;font-weight:500}
+  .field span.mono{font-family:monospace;font-size:12px}
+  table{width:100%;border-collapse:collapse}
+  thead tr{background:#f8fafc}
+  th{padding:9px 12px;text-align:left;font-size:10.5px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e2e8f0}
+  .total-row td{background:#f8fafc;font-weight:700;font-size:14px;padding:11px 12px;border-top:2px solid #1d4ed8}
+  .highlight-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .highlight-box .label{font-size:12px;font-weight:600;color:#1d4ed8}
+  .highlight-box .amount{font-size:24px;font-weight:800;color:#1d4ed8;font-family:monospace}
+  .att-pills{display:flex;gap:8px;flex-wrap:wrap}
+  .att-pill{padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600}
+  .sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+  .sig-box{border-top:1px solid #0f172a;padding-top:8px;text-align:center;font-size:11px;color:#64748b}
+  .print-btn{position:fixed;bottom:24px;right:24px;padding:10px 22px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(29,78,216,.3)}
+  .print-btn:hover{background:#1e40af}
+  .watermark{color:#ef4444;font-weight:700;font-size:11px;border:1px solid #fca5a5;background:#fef2f2;padding:3px 10px;border-radius:4px;display:inline-block;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="co-name">Paripoorna Exports Garments</div>
+    <div class="co-sub">Huliyar, Tumkur District, Karnataka</div>
+  </div>
+  <div class="doc-title">
+    <h1>Full &amp; Final Settlement</h1>
+    <p>Date of Issue: ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</p>
+    <div class="badge">Employee Left — ${l.dateLeft}</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Employee Details</div>
+  <div class="grid">
+    <div class="field"><label>Full Name</label><span>${w.name}</span></div>
+    <div class="field"><label>Employee ID</label><span class="mono">${w.id}</span></div>
+    <div class="field"><label>Employee Type</label><span>${l.type==='worker'?'Worker':'Staff'}</span></div>
+    <div class="field"><label>Section / Department</label><span>${w.section||p.dept||'—'}</span></div>
+    <div class="field"><label>Designation</label><span>${w.role||p.desig||'—'}</span></div>
+    <div class="field"><label>Date of Joining</label><span>${p.doj||'—'}</span></div>
+    <div class="field"><label>Date of Leaving</label><span>${l.dateLeft}</span></div>
+    <div class="field"><label>Daily Wage / Salary</label><span class="mono">Rs. ${Number(w.wage||w.salary||0).toLocaleString('en-IN')}</span></div>
+    <div class="field"><label>Payment Mode</label><span>${p.pm||'—'}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Identity &amp; Bank Details</div>
+  <div class="grid">
+    <div class="field"><label>Aadhaar Number</label><span class="mono">${w.aadhaar?'XXXX XXXX '+String(w.aadhaar).slice(-4):'—'}</span></div>
+    <div class="field"><label>Bank Account No.</label><span class="mono">${w.account||p.bank||'—'}</span></div>
+    <div class="field"><label>IFSC Code</label><span class="mono">${p.ifsc||'—'}</span></div>
+    <div class="field"><label>ESI Number</label><span class="mono">${p.esi||'—'}</span></div>
+    <div class="field"><label>PF Number</label><span class="mono">${p.pf||'—'}</span></div>
+    <div class="field"><label>Mobile</label><span class="mono">${p.mob||'—'}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Attendance Summary</div>
+  <div class="att-pills">
+    <span class="att-pill" style="background:#f0fdf4;color:#15803d">✓ Present: ${attSummary.P} days</span>
+    <span class="att-pill" style="background:#fef2f2;color:#991b1b">✗ Absent: ${attSummary.A} days</span>
+    <span class="att-pill" style="background:#fffbeb;color:#92400e">½ Half Day: ${attSummary.H} days</span>
+    <span class="att-pill" style="background:#f1f5f9;color:#475569">Total Recorded: ${attSummary.P+attSummary.A+attSummary.H} days</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">Month-wise Wages / Salary</div>
+  ${wageRows?`<table>
+    <thead><tr><th>Month</th><th style="text-align:center">Days Present</th><th style="text-align:right">Amount Paid (Rs.)</th></tr></thead>
+    <tbody>${wageRows}</tbody>
+    <tfoot><tr class="total-row"><td colspan="2">Grand Total Paid</td><td style="text-align:right;font-family:monospace">Rs. ${Number(totalPaid).toLocaleString('en-IN')}</td></tr></tfoot>
+  </table>`:`<p style="color:#94a3b8;padding:16px 0">No wage records found in system.</p>`}
+</div>
+
+<div class="highlight-box">
+  <div>
+    <div class="label">Total Amount Paid to Employee</div>
+    <div style="font-size:11px;color:#64748b;margin-top:3px">Sum of all wages recorded in system</div>
+  </div>
+  <div class="amount">Rs. ${Number(totalPaid).toLocaleString('en-IN')}</div>
+</div>
+
+<div class="sig-grid">
+  <div class="sig-box">Employee Signature<br><br><br></div>
+  <div class="sig-box">Authorised By<br>(Manager / Owner)<br><br></div>
+  <div class="sig-box">Accounts / HR<br><br><br></div>
+</div>
+
+<div style="margin-top:28px;padding-top:14px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center">
+  This is a computer-generated document from Paripoorna Exports Garments Factory Management System. Generated on ${new Date().toLocaleString('en-IN')}.
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+</body>
+</html>`;
+  const win=window.open('','_blank','width=850,height=900,scrollbars=yes');
+  win.document.write(html);
+  win.document.close();
+  toast(`Opened settlement PDF for ${w.name}`);
+}
+
+init();
+rDash();
+
+// Load data from Firebase on startup
+(async function(){
+  if(!window.fbLoadAll) return;
+  var remote = await window.fbLoadAll();
+  if(remote){
+    if(remote.workers&&remote.workers.length){DB.workers=remote.workers;localStorage.setItem('pe4_w',JSON.stringify(remote.workers));}
+    if(remote.staff&&remote.staff.length){DB.staff=remote.staff;localStorage.setItem('pe4_s',JSON.stringify(remote.staff));}
+    if(remote.info&&Object.keys(remote.info).length){DB.info=remote.info;localStorage.setItem('pe4_info',JSON.stringify(remote.info));}
+    if(remote.aw&&Object.keys(remote.aw).length){DB.aw=remote.aw;localStorage.setItem('pe4_aw',JSON.stringify(remote.aw));}
+    if(remote.as&&Object.keys(remote.as).length){DB.as=remote.as;localStorage.setItem('pe4_as',JSON.stringify(remote.as));}
+    if(remote.prod&&Object.keys(remote.prod).length){DB.prod=remote.prod;localStorage.setItem('pe4_pd',JSON.stringify(remote.prod));}
+    if(remote.notes){DB.notes=remote.notes;localStorage.setItem('pe4_nt',remote.notes);}
+    if(remote.left&&remote.left.length){DB.left=remote.left;localStorage.setItem('pe4_left',JSON.stringify(remote.left));}
+    // Refresh UI with Firebase data
+    ensureInfoRecords&&ensureInfoRecords();
+    document.getElementById('nb-w').textContent=DB.workers.length;
+    document.getElementById('nb-s').textContent=DB.staff.length;
+    var nbLeft=document.getElementById('nb-left');if(nbLeft)nbLeft.textContent=DB.left.length;
+    rDash();
+  }
+  window.startLiveSync&&window.startLiveSync();
+})();
+
+</script>
+</body>
+</html>
