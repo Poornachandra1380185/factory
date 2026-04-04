@@ -806,8 +806,11 @@ td{padding:10px 14px;font-size:12.5px;color:var(--ink2);vertical-align:middle}
     <div class="fg fg2">
       <div class="ff"><label>Employee ID *</label><input id="wf-id" placeholder="e.g. 001"></div>
       <div class="ff"><label>Full Name *</label><input id="wf-nm" placeholder="Full name"></div>
-      <div class="ff"><label>Section *</label><select id="wf-sec"><option value="">Select section</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option></select></div>
-      <div class="ff"><label>Role / Designation</label><input id="wf-rl" placeholder="Tailor, Helper, Cutter..."></div>
+      <div class="ff"><label>Section *</label><select id="wf-sec" onchange="onSectionChange()"><option value="">Select section</option><option>Cutting</option><option>Sewing</option><option>Kaja Button</option><option>Finishing</option></select></div>
+      <div class="ff"><label>Role / Designation</label>
+<select id="wf-rl" onchange="onRoleChange()"><option value="">Select section first</option></select>
+<textarea id="wf-rl-other" rows="2" placeholder="Describe the role..." style="display:none;margin-top:6px;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--r);padding:8px 11px;font-family:var(--f);font-size:13px;color:var(--ink);outline:none;resize:vertical;width:100%;transition:border-color .14s" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--bg3)'"></textarea>
+</div>
       <div class="ff"><label>Daily Wage (Rs.)</label><input id="wf-wg" type="number" placeholder="450"></div>
       <div class="ff"><label>Employment Type</label><select id="wf-tp"><option value="regular">Regular</option><option value="esi">ESI / PF</option><option value="noacc">No Bank Account</option></select></div>
       <div class="ff"><label>Aadhaar Number</label><input id="wf-ad" placeholder="12-digit Aadhaar" maxlength="14"></div>
@@ -1256,47 +1259,75 @@ function rDash(){
 // WORKER ATTENDANCE
 function rAW(){
   const tk=today(),aw=DB.aw[tk]||{};
-  // Summary KPIs — include all sections
   document.getElementById('aw-summ').innerHTML=SECS.map(s=>{
-    const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
-    return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:14px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">${e.filter(w=>aw[w.id]==='A').length} absent</div></div>`;
+    const sc=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
+    return'<div class="kc" style="--kc:'+sc.c+'"><div class="kc-bar"></div><div class="kc-lbl">'+s+'</div><div class="kc-val">'+p+'<span style="font-size:14px;color:var(--ink4);font-weight:400"> /'+e.length+'</span></div><div class="kc-sub">'+e.filter(w=>aw[w.id]==='A').length+' absent</div></div>';
   }).join('');
   if(!DB.workers.length){document.getElementById('aw-body').innerHTML='<div class="empty">No workers found.</div>';return;}
-  // Show all sections + catch workers with no section
+
+  function mkRow(w,sc){
+    var pOn=aw[w.id]==='P'?'on':'',aOn=aw[w.id]==='A'?'on':'',hOn=aw[w.id]==='H'?'on':'';
+    var esiTag=w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':'';
+    var wid=w.id;
+    var el=document.createElement('div');
+    el.className='att-row';
+    el.innerHTML='<div class="att-row-l">'
+      +'<div class="att-av" style="background:'+sc.bg+';color:'+sc.c+'">'+ini(w.name)+'</div>'
+      +'<div><div class="att-name">'+w.name+'</div>'
+      +'<div class="att-meta">'+w.id+' &middot; Rs.'+fmt(w.wage)+'/day'+esiTag+'</div></div>'
+      +'</div>'
+      +'<div class="att-tgl" id="wt-'+wid+'">'
+      +'<button class="tp '+pOn+'">Present</button>'
+      +'<button class="ta '+aOn+'">Absent</button>'
+      +'<button class="th '+hOn+'">Half Day</button>'
+      +'</div>';
+    var btns=el.querySelectorAll('.att-tgl button');
+    btns[0].onclick=function(){markW(wid,'P');};
+    btns[1].onclick=function(){markW(wid,'A');};
+    btns[2].onclick=function(){markW(wid,'H');};
+    return el.outerHTML;
+  }
+
   const unassigned=DB.workers.filter(w=>!w.section||!SECS.includes(w.section));
-  const secHtml=SECS.map(s=>{
-    const c=SC[s],e=DB.workers.filter(w=>w.section===s);if(!e.length)return'';
-    const p=e.filter(w=>aw[w.id]==='P').length;
-    return`<div class="att-sec" style="--as:${c.c}">
-      <div class="att-sec-hd"><div class="att-sec-hd-l"><div class="att-stripe"></div><div class="att-sec-name">${s} Section</div></div><div class="att-pill" id="ap-${s.replace(/ /g,'-')}">${p} / ${e.length} Present</div></div>
-      ${e.map(w=>`<div class="att-row">
-        <div class="att-row-l">
-          <div class="att-av" style="background:${c.bg};color:${c.c}">${ini(w.name)}</div>
-          <div><div class="att-name">${w.name}</div><div class="att-meta">${w.id} &middot; ${w.role||'Worker'} &middot; Rs.${fmt(w.wage)}/day${w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':''}</div></div>
-        </div>
-        <div class="att-tgl" id="wt-${w.id}">
-          <button class="tp ${aw[w.id]==='P'?'on':''}" onclick="markW('${w.id}','P')">Present</button>
-          <button class="ta ${aw[w.id]==='A'?'on':''}" onclick="markW('${w.id}','A')">Absent</button>
-          <button class="th ${aw[w.id]==='H'?'on':''}" onclick="markW('${w.id}','H')">Half Day</button>
-        </div>
-      </div>`).join('')}
-    </div>`;
+  var secHtml=SECS.map(s=>{
+    const sc=SC[s],workers=DB.workers.filter(w=>w.section===s);
+    if(!workers.length)return'';
+    const totalP=workers.filter(w=>aw[w.id]==='P').length;
+    const roleMap={};
+    workers.forEach(w=>{const role=w.role||'Worker';if(!roleMap[role])roleMap[role]=[];roleMap[role].push(w);});
+    var roleHtml=Object.entries(roleMap).map(function(entry){
+      var role=entry[0],rWorkers=entry[1];
+      var rP=rWorkers.filter(w=>aw[w.id]==='P').length,rH=rWorkers.filter(w=>aw[w.id]==='H').length;
+      return '<div>'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:var(--bg2);border-bottom:1px solid var(--bg3)">'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+        +'<div style="width:3px;height:14px;border-radius:2px;background:'+sc.c+';opacity:.5"></div>'
+        +'<span style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px">'+role+'</span>'
+        +'</div>'
+        +'<span style="font-size:11px;font-weight:600;color:'+sc.c+';background:'+sc.bg+';padding:2px 9px;border-radius:20px">'
+        +rP+' present'+(rH?' &middot; '+rH+' half':'')+' / '+rWorkers.length
+        +'</span></div>'
+        +rWorkers.map(w=>mkRow(w,sc)).join('')
+        +'</div>';
+    }).join('');
+    return '<div class="att-sec" style="--as:'+sc.c+'">'
+      +'<div class="att-sec-hd">'
+      +'<div class="att-sec-hd-l"><div class="att-stripe"></div><div class="att-sec-name">'+s+' Section</div></div>'
+      +'<div class="att-pill" id="ap-'+s.replace(/ /g,'-')+'">'+totalP+' / '+workers.length+' Present</div>'
+      +'</div>'+roleHtml+'</div>';
   }).join('');
-  // Unassigned workers section
-  const unassHtml=unassigned.length?`<div class="att-sec" style="--as:#64748b">
-    <div class="att-sec-hd"><div class="att-sec-hd-l"><div class="att-stripe" style="background:#64748b"></div><div class="att-sec-name">All Workers (Section Not Assigned)</div></div><div class="att-pill" id="ap-unassigned">${unassigned.filter(w=>aw[w.id]==='P').length} / ${unassigned.length} Present</div></div>
-    ${unassigned.map(w=>`<div class="att-row">
-      <div class="att-row-l">
-        <div class="att-av" style="background:#f1f5f9;color:#475569">${ini(w.name)}</div>
-        <div><div class="att-name">${w.name}</div><div class="att-meta">${w.id} &middot; ${w.role||'Worker'} &middot; Rs.${fmt(w.wage)}/day${w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':''}</div></div>
-      </div>
-      <div class="att-tgl" id="wt-${w.id}">
-        <button class="tp ${aw[w.id]==='P'?'on':''}" onclick="markW('${w.id}','P')">Present</button>
-        <button class="ta ${aw[w.id]==='A'?'on':''}" onclick="markW('${w.id}','A')">Absent</button>
-        <button class="th ${aw[w.id]==='H'?'on':''}" onclick="markW('${w.id}','H')">Half Day</button>
-      </div>
-    </div>`).join('')}
-  </div>`:'';
+
+  var unassHtml='';
+  if(unassigned.length){
+    var uP=unassigned.filter(w=>aw[w.id]==='P').length;
+    unassHtml='<div class="att-sec" style="--as:#64748b">'
+      +'<div class="att-sec-hd">'
+      +'<div class="att-sec-hd-l"><div class="att-stripe" style="background:#64748b"></div><div class="att-sec-name">Section Not Assigned</div></div>'
+      +'<div class="att-pill" id="ap-unassigned">'+uP+' / '+unassigned.length+' Present</div>'
+      +'</div>'
+      +unassigned.map(w=>mkRow(w,{bg:'#f1f5f9',c:'#475569'})).join('')
+      +'</div>';
+  }
   document.getElementById('aw-body').innerHTML=secHtml+unassHtml;
 }
 function markW(id,st){const tk=today();if(!DB.aw[tk])DB.aw[tk]={};DB.aw[tk][id]=st;persist();const g=document.getElementById('wt-'+id);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}updAWSumm();}
@@ -1495,7 +1526,31 @@ function renderMProd(){
 function rEOD(){
   const tk=today(),aw=DB.aw[tk]||{},as=DB.as[tk]||{},pd=DB.prod[tk]||{};
   let wa=`<div class="rep-row"><span class="rep-k">Total Workers</span><span class="rep-v">${DB.workers.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.workers.filter(w=>aw[w.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Half Day</span><span class="rep-v" style="color:#b45309">${DB.workers.filter(w=>aw[w.id]==='H').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.workers.filter(w=>aw[w.id]==='A').length}</span></div>`;
-  SECS.forEach(s=>{const e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;wa+=`<div class="rep-row"><span class="rep-k">${s}</span><span class="rep-v">${p} / ${e.length}</span></div>`;});
+  SECS.forEach(function(s){
+    var e=DB.workers.filter(function(w){return w.section===s;}),
+        p=e.filter(function(w){return aw[w.id]==='P';}).length,
+        h=e.filter(function(w){return aw[w.id]==='H';}).length;
+    if(!e.length)return;
+    wa+='<div class="rep-row" style="background:var(--bg2)">'
+      +'<span class="rep-k" style="font-weight:700;color:var(--ink)">'+s+'</span>'
+      +'<span class="rep-v" style="color:var(--blue)">'+p+' present &middot; '+h+' half / '+e.length+' total</span></div>';
+    var roleMap={};
+    e.forEach(function(w){var role=w.role||'Worker';if(!roleMap[role])roleMap[role]=[];roleMap[role].push(w);});
+    Object.entries(roleMap).forEach(function(entry){
+      var role=entry[0],rW=entry[1];
+      var rP=rW.filter(function(w){return aw[w.id]==='P';}).length;
+      var rH=rW.filter(function(w){return aw[w.id]==='H';}).length;
+      var rA=rW.filter(function(w){return aw[w.id]==='A';}).length;
+      wa+='<div class="rep-row" style="padding-left:28px;border-bottom:1px solid var(--bg2)">'
+        +'<span class="rep-k" style="color:var(--ink3);font-size:12px">'+role
+        +' <span style="color:var(--ink4);font-size:10.5px">('+rW.length+')</span></span>'
+        +'<span class="rep-v" style="font-size:12px">'
+        +'<span style="color:var(--green)">'+rP+'P</span>'
+        +(rH>0?' <span style="color:#b45309">'+rH+'H</span>':'')
+        +(rA>0?' <span style="color:var(--red)">'+rA+'A</span>':'')
+        +' / '+rW.length+'</span></div>';
+    });
+  });
   document.getElementById('eod-wa').innerHTML=wa;
   let sa=`<div class="rep-row"><span class="rep-k">Total Staff</span><span class="rep-v">${DB.staff.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.staff.filter(s=>as[s.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.staff.filter(s=>as[s.id]==='A').length}</span></div>`;
   DB.staff.forEach(s=>{sa+=`<div class="rep-row"><span class="rep-k">${s.name}</span><span class="rep-v">${attBadge(as[s.id])}</span></div>`;});
@@ -1523,7 +1578,8 @@ function renderW(){
     </td></tr>`).join(''):'<tr><td colspan="8"><div class="empty">No workers found</div></td></tr>';
 }
 function openWM(){_ewId=null;document.getElementById('wm-title').textContent='Add Worker';['id','nm','sec','rl','wg','tp','ad','ac','fn','gen','dob','mob','addr','doj','ec','pm','ifsc','esi','pf','vid','pan'].forEach(f=>{const e=document.getElementById('wf-'+f);if(e)e.value='';});document.getElementById('wf-tp').value='regular';document.getElementById('wm').classList.add('on');}
-function editW(id){const w=DB.workers.find(x=>x.id===id);if(!w)return;_ewId=id;document.getElementById('wm-title').textContent='Edit Worker';document.getElementById('wf-id').value=w.id;document.getElementById('wf-nm').value=w.name;document.getElementById('wf-sec').value=w.section;document.getElementById('wf-rl').value=w.role||'';document.getElementById('wf-wg').value=w.wage;document.getElementById('wf-tp').value=w.type||'regular';document.getElementById('wf-ad').value=w.aadhaar||'';document.getElementById('wf-ac').value=w.account||'';
+function editW(id){const w=DB.workers.find(x=>x.id===id);if(!w)return;_ewId=id;document.getElementById('wm-title').textContent='Edit Worker';document.getElementById('wf-id').value=w.id;document.getElementById('wf-nm').value=w.name;document.getElementById('wf-sec').value=w.section;// Set section first, update role options, then set saved role
+  onSectionChange(w.role||'');document.getElementById('wf-wg').value=w.wage;document.getElementById('wf-tp').value=w.type||'regular';document.getElementById('wf-ad').value=w.aadhaar||'';document.getElementById('wf-ac').value=w.account||'';
   // also load personal info if exists
   const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id);
   if(infoKey){const r=DB.info[infoKey];['fn','gen','dob','mob','addr','doj','ec','pm','ifsc','esi','pf','vid','pan'].forEach(f=>{const e=document.getElementById('wf-'+f);if(e)e.value=r[f]||'';});}
@@ -1532,7 +1588,7 @@ function saveW(){
   const id=document.getElementById('wf-id').value.trim(),nm=document.getElementById('wf-nm').value.trim(),sec=document.getElementById('wf-sec').value;
   if(!id||!nm||!sec){toast('ID, Name and Section required','t-err');return;}
   if(!_ewId&&DB.workers.find(w=>w.id===id)){toast('Employee ID already exists','t-err');return;}
-  const o={id,name:nm,section:sec,role:document.getElementById('wf-rl').value,wage:document.getElementById('wf-wg').value,type:document.getElementById('wf-tp').value,aadhaar:document.getElementById('wf-ad').value,account:document.getElementById('wf-ac').value};
+  const o={id,name:nm,section:sec,role:getRoleValue(),wage:document.getElementById('wf-wg').value,type:document.getElementById('wf-tp').value,aadhaar:document.getElementById('wf-ad').value,account:document.getElementById('wf-ac').value};
   if(_ewId){const i=DB.workers.findIndex(w=>w.id===_ewId);if(i>-1)DB.workers[i]=o;}else DB.workers.push(o);
   // Save/update personal info record
   const infoKey=Object.keys(DB.info).find(k=>DB.info[k].id===id)||('inf_'+id+'_worker');
@@ -2655,6 +2711,72 @@ function downloadAllExcel() {
   URL.revokeObjectURL(url);
   toast('All 4 salary sheets downloaded!');
 }
+
+/* ── DYNAMIC ROLE OPTIONS BY SECTION ──────────────────────────────────── */
+var SECTION_ROLES = {
+  'Sewing':      ['Tailor','Helper','Iron','Feeding Helper','Other'],
+  'Cutting':     ['Helper','Recutter','Other'],
+  'Kaja Button': ['Operator','Helper','Other'],
+  'Finishing':   ['Iron','Helper','Other']
+};
+
+function onSectionChange(savedRole) {
+  var sec = document.getElementById('wf-sec').value;
+  var rl  = document.getElementById('wf-rl');
+  if(!rl) return;
+  var roles = SECTION_ROLES[sec] || [];
+  rl.innerHTML = '<option value="">Select role</option>';
+  roles.forEach(function(r) {
+    var opt = document.createElement('option');
+    opt.value = r; opt.textContent = r;
+    rl.appendChild(opt);
+  });
+  if (savedRole) {
+    var found = roles.indexOf(savedRole) >= 0;
+    if (found) {
+      rl.value = savedRole;
+    } else if (savedRole && roles.indexOf('Other') >= 0) {
+      rl.value = 'Other';
+      var ob = document.getElementById('wf-rl-other');
+      if (ob) { ob.value = savedRole; ob.style.display = 'block'; }
+    }
+  } else {
+    rl.value = '';
+  }
+  onRoleChange();
+}
+
+function onRoleChange() {
+  var rl = document.getElementById('wf-rl');
+  var ob = document.getElementById('wf-rl-other');
+  if (!ob || !rl) return;
+  if (rl.value === 'Other') {
+    ob.style.display = 'block';
+    ob.focus();
+  } else {
+    ob.style.display = 'none';
+    ob.value = '';
+  }
+}
+
+function getRoleValue() {
+  var rl = document.getElementById('wf-rl');
+  if (!rl) return '';
+  if (rl.value === 'Other') {
+    var ob = document.getElementById('wf-rl-other');
+    return (ob && ob.value.trim()) ? ob.value.trim() : 'Other';
+  }
+  return rl.value;
+}
+
+var _origOpenWM = openWM;
+openWM = function() {
+  _origOpenWM();
+  var rl = document.getElementById('wf-rl');
+  if (rl) rl.innerHTML = '<option value="">Select section first</option>';
+  var ob = document.getElementById('wf-rl-other');
+  if (ob) { ob.style.display = 'none'; ob.value = ''; }
+};
 
 </script>
 
