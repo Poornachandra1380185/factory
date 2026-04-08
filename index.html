@@ -1239,7 +1239,7 @@ function init(){
 function rDash(){
   const tk=today(),aw=DB.aw[tk]||{},as=DB.as[tk]||{};
   document.getElementById('d-secs').innerHTML=SECS.map(s=>{
-    const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
+    const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[String(w.id)]==='P').length;
     return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:15px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">workers present</div></div>`;
   }).join('');
   const pd=DB.prod[tk]||{};
@@ -1248,56 +1248,52 @@ function rDash(){
     return`<div class="kc" style="--kc:${BC[b]}"><div class="kc-bar"></div><div class="kc-lbl">${BL[b]}</div><div class="kc-val">${d}</div><div class="kc-sub">of ${t||'—'} target &middot; ${pct}%</div><div class="prog-track" style="margin-top:10px"><div class="prog-fill" style="background:${BC[b]};width:${pct}%"></div></div></div>`;
   }).join('');
   document.getElementById('d-tw').textContent=DB.workers.length;
-  document.getElementById('d-wp').textContent=DB.workers.filter(w=>aw[w.id]==='P').length;
-  document.getElementById('d-sp').textContent=DB.staff.filter(s=>as[s.id]==='P').length;
+  document.getElementById('d-wp').textContent=DB.workers.filter(w=>aw[String(w.id)]==='P').length;
+  document.getElementById('d-sp').textContent=DB.staff.filter(s=>as[String(s.id)]==='P').length;
   document.getElementById('d-st').textContent=DB.staff.length;
   const snap=DB.workers.slice(0,12);
   document.getElementById('d-snap-c').textContent='Showing '+snap.length;
-  document.getElementById('d-snap').innerHTML=snap.map(w=>`<tr><td class="t-id">${w.id}</td><td class="t-name">${w.name}</td><td>${secBadge(w.section)}</td><td class="t-wage">Rs.${fmt(w.wage)}</td><td>${typBadge(w.type)}</td><td>${attBadge(aw[w.id])}</td></tr>`).join('');
+  document.getElementById('d-snap').innerHTML=snap.map(w=>`<tr><td class="t-id">${w.id}</td><td class="t-name">${w.name}</td><td>${secBadge(w.section)}</td><td class="t-wage">Rs.${fmt(w.wage)}</td><td>${typBadge(w.type)}</td><td>${attBadge(aw[String(w.id)])}</td></tr>`).join('');
 }
 
 // WORKER ATTENDANCE
 function rAW(){
   const tk=today(),aw=DB.aw[tk]||{};
   document.getElementById('aw-summ').innerHTML=SECS.map(s=>{
-    const sc=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;
-    return'<div class="kc" style="--kc:'+sc.c+'"><div class="kc-bar"></div><div class="kc-lbl">'+s+'</div><div class="kc-val">'+p+'<span style="font-size:14px;color:var(--ink4);font-weight:400"> /'+e.length+'</span></div><div class="kc-sub">'+e.filter(w=>aw[w.id]==='A').length+' absent</div></div>';
+    const sc=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[String(w.id)]==='P').length;
+    return'<div class="kc" style="--kc:'+sc.c+'"><div class="kc-bar"></div><div class="kc-lbl">'+s+'</div><div class="kc-val">'+p+'<span style="font-size:14px;color:var(--ink4);font-weight:400"> /'+e.length+'</span></div><div class="kc-sub">'+e.filter(w=>aw[String(w.id)]==='A').length+' absent</div></div>';
   }).join('');
   if(!DB.workers.length){document.getElementById('aw-body').innerHTML='<div class="empty">No workers found.</div>';return;}
 
   function mkRow(w,sc){
-    var pOn=aw[w.id]==='P'?'on':'',aOn=aw[w.id]==='A'?'on':'',hOn=aw[w.id]==='H'?'on':'';
+    var sid=String(w.id);
+    var awNow=DB.aw[tk]||{};
+    var pOn=awNow[sid]==='P'?'on':'',aOn=awNow[sid]==='A'?'on':'',hOn=awNow[sid]==='H'?'on':'';
     var esiTag=w.type==='esi'?' &middot; <span class="bd bd-amber" style="font-size:10px">ESI/PF</span>':'';
-    var wid=w.id;
-    var el=document.createElement('div');
-    el.className='att-row';
-    el.innerHTML='<div class="att-row-l">'
+    return '<div class="att-row">'
+      +'<div class="att-row-l">'
       +'<div class="att-av" style="background:'+sc.bg+';color:'+sc.c+'">'+ini(w.name)+'</div>'
       +'<div><div class="att-name">'+w.name+'</div>'
-      +'<div class="att-meta">'+w.id+' &middot; Rs.'+fmt(w.wage)+'/day'+esiTag+'</div></div>'
+      +'<div class="att-meta">'+sid+' &middot; Rs.'+fmt(w.wage)+'/day'+esiTag+'</div></div>'
       +'</div>'
-      +'<div class="att-tgl" id="wt-'+wid+'">'
-      +'<button class="tp '+pOn+'">Present</button>'
-      +'<button class="ta '+aOn+'">Absent</button>'
-      +'<button class="th '+hOn+'">Half Day</button>'
+      +'<div class="att-tgl" id="wt-'+sid+'">'
+      +'<button class="tp '+pOn+'" onclick="markW(\''+sid+'\',\'P\')">Present</button>'
+      +'<button class="ta '+aOn+'" onclick="markW(\''+sid+'\',\'A\')">Absent</button>'
+      +'<button class="th '+hOn+'" onclick="markW(\''+sid+'\',\'H\')">Half Day</button>'
+      +'</div>'
       +'</div>';
-    var btns=el.querySelectorAll('.att-tgl button');
-    btns[0].onclick=function(){markW(wid,'P');};
-    btns[1].onclick=function(){markW(wid,'A');};
-    btns[2].onclick=function(){markW(wid,'H');};
-    return el.outerHTML;
   }
 
   const unassigned=DB.workers.filter(w=>!w.section||!SECS.includes(w.section));
   var secHtml=SECS.map(s=>{
     const sc=SC[s],workers=DB.workers.filter(w=>w.section===s);
     if(!workers.length)return'';
-    const totalP=workers.filter(w=>aw[w.id]==='P').length;
+    const totalP=workers.filter(w=>aw[String(w.id)]==='P').length;
     const roleMap={};
     workers.forEach(w=>{const role=w.role||'Worker';if(!roleMap[role])roleMap[role]=[];roleMap[role].push(w);});
     var roleHtml=Object.entries(roleMap).map(function(entry){
       var role=entry[0],rWorkers=entry[1];
-      var rP=rWorkers.filter(w=>aw[w.id]==='P').length,rH=rWorkers.filter(w=>aw[w.id]==='H').length;
+      var rP=rWorkers.filter(w=>aw[String(w.id)]==='P').length,rH=rWorkers.filter(w=>aw[String(w.id)]==='H').length;
       return '<div>'
         +'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:var(--bg2);border-bottom:1px solid var(--bg3)">'
         +'<div style="display:flex;align-items:center;gap:8px">'
@@ -1319,7 +1315,7 @@ function rAW(){
 
   var unassHtml='';
   if(unassigned.length){
-    var uP=unassigned.filter(w=>aw[w.id]==='P').length;
+    var uP=unassigned.filter(w=>aw[String(w.id)]==='P').length;
     unassHtml='<div class="att-sec" style="--as:#64748b">'
       +'<div class="att-sec-hd">'
       +'<div class="att-sec-hd-l"><div class="att-stripe" style="background:#64748b"></div><div class="att-sec-name">Section Not Assigned</div></div>'
@@ -1330,15 +1326,15 @@ function rAW(){
   }
   document.getElementById('aw-body').innerHTML=secHtml+unassHtml;
 }
-function markW(id,st){const tk=today();if(!DB.aw[tk])DB.aw[tk]={};DB.aw[tk][id]=st;persist();const g=document.getElementById('wt-'+id);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}updAWSumm();}
-function updAWSumm(){const tk=today(),aw=DB.aw[tk]||{};SECS.forEach(s=>{const key=s.replace(/ /g,'-'),e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;const el=document.getElementById('ap-'+key);if(el)el.textContent=`${p} / ${e.length} Present`;});document.getElementById('aw-summ').innerHTML=SECS.map(s=>{const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[w.id]==='P').length;return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:14px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">${e.filter(w=>aw[w.id]==='A').length} absent</div></div>`;}).join('');}
-function markAll(type){const tk=today();if(type==='w'){if(!DB.aw[tk])DB.aw[tk]={};DB.workers.forEach(w=>{DB.aw[tk][w.id]='P';});persist();rAW();}else{if(!DB.as[tk])DB.as[tk]={};DB.staff.forEach(s=>{DB.as[tk][s.id]='P';});persist();rAS();}toast('All marked Present');}
+function markW(id,st){const sid=String(id);const tk=today();if(!DB.aw[tk])DB.aw[tk]={};DB.aw[tk][sid]=st;persist();const g=document.getElementById('wt-'+sid);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}updAWSumm();}
+function updAWSumm(){const tk=today(),aw=DB.aw[tk]||{};SECS.forEach(s=>{const key=s.replace(/ /g,'-'),e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[String(w.id)]==='P').length;const el=document.getElementById('ap-'+key);if(el)el.textContent=`${p} / ${e.length} Present`;});document.getElementById('aw-summ').innerHTML=SECS.map(s=>{const c=SC[s],e=DB.workers.filter(w=>w.section===s),p=e.filter(w=>aw[String(w.id)]==='P').length;return`<div class="kc" style="--kc:${c.c}"><div class="kc-bar"></div><div class="kc-lbl">${s}</div><div class="kc-val">${p}<span style="font-size:14px;color:var(--ink4);font-weight:400"> /${e.length}</span></div><div class="kc-sub">${e.filter(w=>aw[String(w.id)]==='A').length} absent</div></div>`;}).join('');}
+function markAll(type){const tk=today();if(type==='w'){if(!DB.aw[tk])DB.aw[tk]={};DB.workers.forEach(w=>{DB.aw[tk][String(w.id)]='P';});persist();rAW();}else{if(!DB.as[tk])DB.as[tk]={};DB.staff.forEach(s=>{DB.as[tk][String(s.id)]='P';});persist();rAS();}toast('All marked Present');}
 function saveAtt(t){persist();toast(t==='w'?'Worker attendance saved':'Staff attendance saved');}
 
 // STAFF ATTENDANCE
 function rAS(){
   const tk=today(),as=DB.as[tk]||{};
-  const p=DB.staff.filter(s=>as[s.id]==='P').length,a=DB.staff.filter(s=>as[s.id]==='A').length;
+  const p=DB.staff.filter(s=>as[String(s.id)]==='P').length,a=DB.staff.filter(s=>as[String(s.id)]==='A').length;
   document.getElementById('as-summ').innerHTML=`
     <div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Total Staff</div><div class="kc-val">${DB.staff.length}</div></div>
     <div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Present</div><div class="kc-val">${p}</div></div>
@@ -1350,14 +1346,14 @@ function rAS(){
         <div class="att-av" style="background:var(--violets);color:var(--violet)">${ini(s.name)}</div>
         <div><div class="att-name">${s.name}</div><div class="att-meta">${s.id} &middot; ${s.role} &middot; Rs.${fmt(s.salary)}/month</div></div>
       </div>
-      <div class="att-tgl" id="st-${s.id}">
-        <button class="tp ${as[s.id]==='P'?'on':''}" onclick="markS('${s.id}','P')">Present</button>
-        <button class="ta ${as[s.id]==='A'?'on':''}" onclick="markS('${s.id}','A')">Absent</button>
+      <div class="att-tgl" id="st-${String(s.id)}">
+        <button class="tp ${as[String(s.id)]==='P'?'on':''}" onclick="markS('${String(s.id)}','P')">Present</button>
+        <button class="ta ${as[String(s.id)]==='A'?'on':''}" onclick="markS('${String(s.id)}','A')">Absent</button>
       </div>
     </div>`).join('')}
   </div>`;
 }
-function markS(id,st){const tk=today();if(!DB.as[tk])DB.as[tk]={};DB.as[tk][id]=st;persist();const g=document.getElementById('st-'+id);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}const as=DB.as[tk]||{},p=DB.staff.filter(s=>as[s.id]==='P').length,a=DB.staff.filter(s=>as[s.id]==='A').length;const el=document.getElementById('ap-staff');if(el)el.textContent=`${p} / ${DB.staff.length} Present`;document.getElementById('as-summ').innerHTML=`<div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Total Staff</div><div class="kc-val">${DB.staff.length}</div></div><div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Present</div><div class="kc-val">${p}</div></div><div class="kc" style="--kc:var(--red)"><div class="kc-bar"></div><div class="kc-lbl">Absent</div><div class="kc-val">${a}</div></div>`;}
+function markS(id,st){const sid=String(id);const tk=today();if(!DB.as[tk])DB.as[tk]={};DB.as[tk][sid]=st;persist();const g=document.getElementById('st-'+sid);if(g){g.querySelectorAll('button').forEach(b=>b.classList.remove('on'));g.querySelector('.t'+st.toLowerCase()).classList.add('on');}const as=DB.as[tk]||{},p=DB.staff.filter(s=>as[String(s.id)]==='P').length,a=DB.staff.filter(s=>as[String(s.id)]==='A').length;const el=document.getElementById('ap-staff');if(el)el.textContent=`${p} / ${DB.staff.length} Present`;document.getElementById('as-summ').innerHTML=`<div class="kc" style="--kc:var(--violet)"><div class="kc-bar"></div><div class="kc-lbl">Total Staff</div><div class="kc-val">${DB.staff.length}</div></div><div class="kc" style="--kc:var(--green)"><div class="kc-bar"></div><div class="kc-lbl">Present</div><div class="kc-val">${p}</div></div><div class="kc" style="--kc:var(--red)"><div class="kc-bar"></div><div class="kc-lbl">Absent</div><div class="kc-val">${a}</div></div>`;}
 
 // PRODUCTION
 // PRODUCTION — with date navigation
@@ -1525,11 +1521,11 @@ function renderMProd(){
 // EOD
 function rEOD(){
   const tk=today(),aw=DB.aw[tk]||{},as=DB.as[tk]||{},pd=DB.prod[tk]||{};
-  let wa=`<div class="rep-row"><span class="rep-k">Total Workers</span><span class="rep-v">${DB.workers.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.workers.filter(w=>aw[w.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Half Day</span><span class="rep-v" style="color:#b45309">${DB.workers.filter(w=>aw[w.id]==='H').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.workers.filter(w=>aw[w.id]==='A').length}</span></div>`;
+  let wa=`<div class="rep-row"><span class="rep-k">Total Workers</span><span class="rep-v">${DB.workers.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.workers.filter(w=>aw[String(w.id)]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Half Day</span><span class="rep-v" style="color:#b45309">${DB.workers.filter(w=>aw[String(w.id)]==='H').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.workers.filter(w=>aw[String(w.id)]==='A').length}</span></div>`;
   SECS.forEach(function(s){
     var e=DB.workers.filter(function(w){return w.section===s;}),
-        p=e.filter(function(w){return aw[w.id]==='P';}).length,
-        h=e.filter(function(w){return aw[w.id]==='H';}).length;
+        p=e.filter(function(w){return aw[String(w.id)]==='P';}).length,
+        h=e.filter(function(w){return aw[String(w.id)]==='H';}).length;
     if(!e.length)return;
     wa+='<div class="rep-row" style="background:var(--bg2)">'
       +'<span class="rep-k" style="font-weight:700;color:var(--ink)">'+s+'</span>'
@@ -1538,9 +1534,9 @@ function rEOD(){
     e.forEach(function(w){var role=w.role||'Worker';if(!roleMap[role])roleMap[role]=[];roleMap[role].push(w);});
     Object.entries(roleMap).forEach(function(entry){
       var role=entry[0],rW=entry[1];
-      var rP=rW.filter(function(w){return aw[w.id]==='P';}).length;
-      var rH=rW.filter(function(w){return aw[w.id]==='H';}).length;
-      var rA=rW.filter(function(w){return aw[w.id]==='A';}).length;
+      var rP=rW.filter(function(w){return aw[String(w.id)]==='P';}).length;
+      var rH=rW.filter(function(w){return aw[String(w.id)]==='H';}).length;
+      var rA=rW.filter(function(w){return aw[String(w.id)]==='A';}).length;
       wa+='<div class="rep-row" style="padding-left:28px;border-bottom:1px solid var(--bg2)">'
         +'<span class="rep-k" style="color:var(--ink3);font-size:12px">'+role
         +' <span style="color:var(--ink4);font-size:10.5px">('+rW.length+')</span></span>'
@@ -1552,8 +1548,8 @@ function rEOD(){
     });
   });
   document.getElementById('eod-wa').innerHTML=wa;
-  let sa=`<div class="rep-row"><span class="rep-k">Total Staff</span><span class="rep-v">${DB.staff.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.staff.filter(s=>as[s.id]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.staff.filter(s=>as[s.id]==='A').length}</span></div>`;
-  DB.staff.forEach(s=>{sa+=`<div class="rep-row"><span class="rep-k">${s.name}</span><span class="rep-v">${attBadge(as[s.id])}</span></div>`;});
+  let sa=`<div class="rep-row"><span class="rep-k">Total Staff</span><span class="rep-v">${DB.staff.length}</span></div><div class="rep-row"><span class="rep-k">Present</span><span class="rep-v" style="color:var(--green)">${DB.staff.filter(s=>as[String(s.id)]==='P').length}</span></div><div class="rep-row"><span class="rep-k">Absent</span><span class="rep-v" style="color:var(--red)">${DB.staff.filter(s=>as[String(s.id)]==='A').length}</span></div>`;
+  DB.staff.forEach(s=>{sa+=`<div class="rep-row"><span class="rep-k">${s.name}</span><span class="rep-v">${attBadge(as[String(s.id)])}</span></div>`;});
   document.getElementById('eod-sa').innerHTML=sa;
   document.getElementById('eod-prods').innerHTML=BATCHES.map(b=>{const d=parseInt(pd[b+'_d'])||0,t=parseInt(pd[b+'_t'])||0,f=parseInt(pd[b+'_f'])||0,pct=t>0?Math.round(d/t*100):0;return`<div class="kc" style="--kc:${BC[b]}"><div class="kc-bar"></div><div class="kc-lbl">${BL[b]}</div><div class="kc-val">${d}</div><div class="kc-sub">of ${t||'—'} &middot; ${pct}%</div>${f?`<div style="font-size:11px;color:var(--red);margin-top:4px">${f} defects</div>`:''}<div class="prog-track" style="margin-top:8px"><div class="prog-fill" style="background:${BC[b]};width:${pct}%"></div></div></div>`;}).join('');
   document.getElementById('op-notes').value=DB.notes;
@@ -1864,17 +1860,17 @@ function renderWg(){
     const monIdx=String(MONTHS.indexOf(mon)+1).padStart(2,'0');
     const prefix=yr+'-'+monIdx;
     const wd={},wh={};
-    DB.workers.forEach(w=>{wd[w.id]=0;wh[w.id]=0;});
+    DB.workers.forEach(w=>{wd[String(w.id)]=0;wh[String(w.id)]=0;});
     Object.entries(DB.aw).forEach(function([date,rec]){
       if(!date.startsWith(prefix))return;
       Object.entries(rec).forEach(function([id,st]){
-        if(wd[id]!==undefined){if(st==='P')wd[id]++;else if(st==='H')wh[id]++;}
+        if(wd[String(id)]!==undefined){if(st==='P')wd[String(id)]++;else if(st==='H')wh[String(id)]++;}
       });
     });
     let tot=0;
     const lbl=document.getElementById('wg-mon-lbl');if(lbl)lbl.textContent=mon+' '+yr;
     document.getElementById('wg-w-tbl').innerHTML=DB.workers.map(function(w){
-      const d=wd[w.id]||0,h=wh[w.id]||0,effective=d+(h*0.5),t=parseFloat(w.wage||0)*effective;tot+=t;
+      const d=wd[String(w.id)]||0,h=wh[String(w.id)]||0,effective=d+(h*0.5),t=parseFloat(w.wage||0)*effective;tot+=t;
       return'<tr><td class="t-id">'+w.id+'</td><td class="t-name">'+w.name+'</td><td>'+secBadge(w.section)+'</td><td style="color:var(--ink3)">Rs.'+fmt(w.wage)+'</td><td style="font-family:var(--mono);font-weight:600;color:var(--blue)">'+d+'</td><td style="font-family:var(--mono);font-weight:600;color:#b45309">'+h+'</td><td class="t-amt">Rs.'+fmt(t)+'</td><td class="t-mono">'+mAcc(w.account)+'</td></tr>';
     }).join('')+'<tr class="t-tot"><td colspan="6" style="color:var(--ink3)">Grand Total — All Workers</td><td class="t-amt">Rs.'+fmt(tot)+'</td><td></td></tr>';
     const reg=DB.workers.filter(w=>w.type==='regular').length,esi=DB.workers.filter(w=>w.type==='esi').length,na=DB.workers.filter(w=>w.type==='noacc').length;
@@ -1885,15 +1881,15 @@ function renderWg(){
     const monIdx=String(MONTHS.indexOf(mon)+1).padStart(2,'0');
     const prefix=yr+'-'+monIdx;
     const sd={};
-    DB.staff.forEach(s=>{sd[s.id]=0;});
+    DB.staff.forEach(s=>{sd[String(s.id)]=0;});
     Object.entries(DB.as).forEach(function([date,rec]){
       if(!date.startsWith(prefix))return;
-      Object.entries(rec).forEach(function([id,st]){if(sd[id]!==undefined&&st==='P')sd[id]++;});
+      Object.entries(rec).forEach(function([id,st]){if(sd[String(id)]!==undefined&&st==='P')sd[String(id)]++;});
     });
     const lbl=document.getElementById('wg-mon-s-lbl');if(lbl)lbl.textContent=mon+' '+yr;
     let tot=0;
     document.getElementById('wg-s-tbl').innerHTML=DB.staff.map(function(s){
-      const d=sd[s.id]||0,sal=parseFloat(s.salary||0);tot+=sal;
+      const d=sd[String(s.id)]||0,sal=parseFloat(s.salary||0);tot+=sal;
       return'<tr><td class="t-id">'+s.id+'</td><td class="t-name">'+s.name+'</td><td><span class="bd bd-violet">'+s.role+'</span></td><td class="t-sal">Rs.'+fmt(s.salary)+'</td><td style="font-family:var(--mono);font-weight:600;color:var(--blue)">'+d+'</td><td class="t-amt">Rs.'+fmt(sal)+'</td><td class="t-mono">'+(s.account||'—')+'</td></tr>';
     }).join('')+'<tr class="t-tot"><td colspan="5" style="color:var(--ink3)">Grand Total — All Staff</td><td class="t-amt">Rs.'+fmt(tot)+'</td><td></td></tr>';
   }
@@ -1913,15 +1909,15 @@ function renderDateWise(){
   let grandTotal=0,grandWorkers=0,grandHalf=0;
   const dayRows=dates.map(function(date){
     const aw=DB.aw[date]||{},as=DB.as[date]||{};
-    const wP=DB.workers.filter(w=>aw[w.id]==='P').length;
-    const wH=DB.workers.filter(w=>aw[w.id]==='H').length;
-    const wA=DB.workers.filter(w=>aw[w.id]==='A').length;
-    const sP=DB.staff.filter(s=>as[s.id]==='P').length;
+    const wP=DB.workers.filter(w=>aw[String(w.id)]==='P').length;
+    const wH=DB.workers.filter(w=>aw[String(w.id)]==='H').length;
+    const wA=DB.workers.filter(w=>aw[String(w.id)]==='A').length;
+    const sP=DB.staff.filter(s=>as[String(s.id)]==='P').length;
     // Daily wage cost
     let dayCost=0;
     DB.workers.forEach(function(w){
-      if(aw[w.id]==='P')dayCost+=parseFloat(w.wage||0);
-      else if(aw[w.id]==='H')dayCost+=parseFloat(w.wage||0)*0.5;
+      if(aw[String(w.id)]==='P')dayCost+=parseFloat(w.wage||0);
+      else if(aw[String(w.id)]==='H')dayCost+=parseFloat(w.wage||0)*0.5;
     });
     grandTotal+=dayCost;grandWorkers+=wP;grandHalf+=wH;
     const hasData=Object.keys(aw).length>0||Object.keys(as).length>0;
@@ -1955,7 +1951,7 @@ function showDayDetail(date){
   const dayName=new Date(date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   let wCost=0;
   const wRows=DB.workers.map(function(w){
-    const st=aw[w.id];if(!st||st==='A')return'';
+    const st=aw[String(w.id)];if(!st||st==='A')return'';
     const pay=st==='P'?parseFloat(w.wage||0):parseFloat(w.wage||0)*0.5;
     wCost+=pay;
     return'<tr><td class="t-id">'+w.id+'</td><td class="t-name">'+w.name+'</td><td>'+secBadge(w.section)+'</td>'
@@ -1963,7 +1959,7 @@ function showDayDetail(date){
       +'<td class="t-amt">Rs.'+fmt(pay)+'</td></tr>';
   }).join('');
   const sRows=DB.staff.map(function(s){
-    const st=as[s.id];if(!st||st==='A')return'';
+    const st=as[String(s.id)];if(!st||st==='A')return'';
     return'<tr><td class="t-id">'+s.id+'</td><td class="t-name">'+s.name+'</td><td><span class="bd bd-violet">'+s.role+'</span></td>'
       +'<td><span class="bd bd-green">'+st+'</span></td><td class="t-sal">Monthly</td></tr>';
   }).join('');
@@ -2337,12 +2333,12 @@ function buildSalarySheets() {
 
   /* worker attendance counts */
   var wd = {}, wh = {};
-  DB.workers.forEach(function(w) { wd[w.id] = 0; wh[w.id] = 0; });
+  DB.workers.forEach(function(w) { wd[String(w.id)] = 0; wh[String(w.id)] = 0; });
   Object.entries(DB.aw).forEach(function(kv) {
     var date = kv[0], rec = kv[1];
     if (!date.startsWith(prefix)) return;
     Object.entries(rec).forEach(function(kv2) {
-      var id = kv2[0], st = kv2[1];
+      var id = String(kv2[0]), st = kv2[1];
       if (wd[id] !== undefined) {
         if (st === 'P') wd[id]++;
         else if (st === 'H') wh[id]++;
@@ -2352,12 +2348,12 @@ function buildSalarySheets() {
 
   /* staff attendance counts */
   var sd = {};
-  DB.staff.forEach(function(s) { sd[s.id] = 0; });
+  DB.staff.forEach(function(s) { sd[String(s.id)] = 0; });
   Object.entries(DB.as).forEach(function(kv) {
     var date = kv[0], rec = kv[1];
     if (!date.startsWith(prefix)) return;
     Object.entries(rec).forEach(function(kv2) {
-      var id = kv2[0], st = kv2[1];
+      var id = String(kv2[0]), st = kv2[1];
       if (sd[id] !== undefined && st === 'P') sd[id]++;
     });
   });
@@ -2371,8 +2367,8 @@ function buildSalarySheets() {
   var bankW = [], esiW = [], cashW = [];
   DB.workers.forEach(function(w) {
     var info = getInfo('worker', w.id);
-    var days = wd[w.id] || 0;
-    var half = wh[w.id] || 0;
+    var days = wd[String(w.id)] || 0;
+    var half = wh[String(w.id)] || 0;
     var eff  = days + (half * 0.5);
     var pay  = parseFloat(w.wage || 0) * eff;
     var rec  = {
@@ -2392,7 +2388,7 @@ function buildSalarySheets() {
   var staffList = [];
   DB.staff.forEach(function(s) {
     var info  = getInfo('staff', s.id);
-    var days  = sd[s.id] || 0;
+    var days  = sd[String(s.id)] || 0;
     var sal   = parseFloat(s.salary || 0);
     /* Staff always receive full monthly salary regardless of leaves taken */
     var proratedPay = sal;
